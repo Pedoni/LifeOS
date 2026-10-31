@@ -57,6 +57,23 @@ Push uses a generic RPC, `push_rows`, which receives complete rows with
 chosen over table triggers). The initial conflict policy is last-write-wins on
 server timestamps with that safeguard. See [SYNC.md](SYNC.md).
 
+### D-13 Static analysis and formatting
+
+ktlint (through `ktlint-gradle` 14.2.0, ktlint 1.8.0) and detekt are configured
+through the `lifeos.quality` convention plugin. detekt is on
+`2.0.0-alpha.6`, a **pre-release**: the stable 1.23.8 is built for Kotlin 2.0.21
+and AGP 8.8 and has no AGP 9 support, while the 2.x line is the one targeting
+AGP 9. The version is pinned and runs correctly on this project (AGP 9.5.0,
+Kotlin 2.2.10). It will be moved to the first stable 2.x release. If it becomes
+a problem, detekt can be removed without affecting the rest of the build.
+
+### D-14 Convention plugin scope
+
+Convention plugins live in `build-logic/convention`. Only what the current
+single module needs exists (application, Compose, quality); library and
+pure-Kotlin plugins are added with the modularization step, to avoid
+speculative code.
+
 ## Proposed
 
 ### D-08 Scope of version 1.0.0
@@ -95,8 +112,11 @@ the feature off, only aggregated data is sent, and per-user quotas apply.
 - Package layout inside the modules (base package is `it.edon.lifeos`).
 - Whether Retrofit is needed, given that the Supabase Kotlin client has its own
   networking.
-- Compatibility of Hilt, Room and KSP with AGP 9.5 and Kotlin 2.2.10 (to be
-  verified in step 0.2 against official documentation).
+- Compatibility of Hilt, Room and KSP with AGP 9.5 and Kotlin 2.2.10: sources
+  indicate it should work (KSP 2.3.6 or newer, Hilt 2.59 or newer) but it has
+  to be verified with a real build in the step that adds them. A known open
+  KSP bug affects Room entities annotated with `@Parcelize` under AGP 9, which
+  the architecture avoids by keeping entities separate from domain models.
 - User-facing behavior on a sync conflict (re-apply or discard).
 - Whether `allowBackup` should stay enabled given the personal data stored.
 - Contract between life modules and the dashboard.

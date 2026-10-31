@@ -32,16 +32,20 @@ What the project actually uses today:
 | UI | Jetpack Compose (BOM 2026.02.01), Material 3 |
 | Build | Android Gradle Plugin 9.5.0, Gradle 9.6.0 |
 | Android | `minSdk` 29, `targetSdk` / `compileSdk` 37 |
+| Build logic | Gradle convention plugins in [`build-logic`](build-logic) |
+| Code quality | ktlint 1.8.0, detekt 2.0.0-alpha.6 (pre-release, see [DECISIONS.md](docs/DECISIONS.md)) |
 | Backend | Supabase project created, schema in [`supabase/sql`](supabase/sql) |
 
 Hilt, Room, DataStore, Navigation Compose, Coroutines, Retrofit/OkHttp, Kotlin
-Serialization, WorkManager, Coil, Vico, MockK, Turbine, detekt and ktlint are
-planned and **not yet added**.
+Serialization, WorkManager, Coil, Vico, MockK and Turbine are planned and
+**not yet added**.
 
 ## Repository layout
 
 ```
 app/              Android application module (template, to be modularized)
+build-logic/      Gradle convention plugins
+config/detekt/    detekt rules
 docs/             Product specification, architecture, database, sync, roadmap, decisions
 supabase/sql/     Backend schema and RPC functions
 gradle/           Version catalog and wrapper
@@ -55,6 +59,7 @@ configured for toolchain 25) and an Android SDK with API 37.
 ```
 ./gradlew assembleDebug     # build the debug APK
 ./gradlew test              # JVM unit tests
+./gradlew ktlintCheck detekt  # formatting and static analysis
 ```
 
 On Windows use `gradlew.bat`.

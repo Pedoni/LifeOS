@@ -98,11 +98,25 @@ layer.
 ## Build
 
 Version catalog in `gradle/libs.versions.toml`. Convention plugins in
-`build-logic` will centralize Android and Kotlin configuration. The project
-uses AGP 9.x, which bundles Kotlin support: compatibility of KSP, Hilt and Room
-with AGP 9 must be verified before adding them.
+`build-logic/convention` centralize Android and Kotlin configuration:
 
-## Tooling (planned)
+| Plugin | Purpose |
+|---|---|
+| `lifeos.android.application` | SDK levels (from the catalog), Java level, test runner; applies `lifeos.quality` |
+| `lifeos.android.compose` | Compose compiler plugin, `buildFeatures.compose`, Compose BOM (application and library modules) |
+| `lifeos.quality` | ktlint and detekt configuration |
 
-detekt and ktlint for static analysis and formatting, GitHub Actions for CI,
-MockK, Turbine and Compose UI testing for tests.
+Library and pure-Kotlin convention plugins will be added together with the
+modules that need them.
+
+The project uses AGP 9.x, which bundles Kotlin support. From research (not yet
+exercised in this project): KSP must be 2.3.6 or newer for AGP 9 and `kapt` is
+not supported; Hilt supports AGP 9 from 2.59. Hilt, Room and KSP must be
+verified with a real build when they are introduced.
+
+## Tooling
+
+- ktlint 1.8.0 through `ktlint-gradle` (formatting), rules in `.editorconfig`.
+- detekt 2.0.0-alpha.6 (static analysis), rules in `config/detekt/detekt.yml`.
+  It is a pre-release, see [DECISIONS.md](DECISIONS.md).
+- Planned: GitHub Actions for CI, MockK, Turbine and Compose UI testing.

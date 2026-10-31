@@ -16,17 +16,17 @@ Gradle configuration.
 
 ## Current state
 
-The repository contains the Empty Activity template. Step 0.0 (inspection) and
-step 0.1 (documentation) are the only steps started. The Supabase development
-project exists with its schema applied.
+The repository contains the Empty Activity template with the build foundation
+being added (convention plugins, ktlint, detekt). No product feature exists
+yet. The Supabase development project exists with its schema applied.
 
 ## Phase 0 - Foundation (target `0.1.0`)
 
 | Step | Branch | Scope | Status |
 |---|---|---|---|
 | 0.0 | - | Read-only inspection of the project | done |
-| 0.1 | `docs/project-docs` | README, CLAUDE.md, docs, Supabase SQL scripts | in progress |
-| 0.2 | `chore/build-foundation` | Version catalog, convention plugins, detekt, ktlint, `.editorconfig`, `.gitattributes` | planned |
+| 0.1 | `docs/project-docs` | README, CLAUDE.md, docs, Supabase SQL scripts | done |
+| 0.2 | `chore/build-foundation` | Version catalog, convention plugins (application, Compose, quality), detekt, ktlint, `.editorconfig`, `.gitattributes` | in progress |
 | 0.3 | `feature/modularization` | `core/*` and `feature/*` modules, dependency rules | planned |
 | 0.4 | `feature/design-system` | Tokens, Material 3 theme, typography, base components | planned |
 | 0.5 | `feature/navigation` | Navigation Compose, bottom bar, placeholder destinations | planned |

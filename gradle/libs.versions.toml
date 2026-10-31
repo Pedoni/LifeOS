@@ -33,15 +33,20 @@ androidx-compose-material3 = { group = "androidx.compose.material3", name = "mat
 
 # Dependencies of the convention plugins in build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
+kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlin-composeGradlePlugin = { group = "org.jetbrains.kotlin", name = "compose-compiler-gradle-plugin", version.ref = "kotlin" }
 ktlint-gradlePlugin = { group = "org.jlleitschuh.gradle", name = "ktlint-gradle", version.ref = "ktlintGradle" }
 detekt-gradlePlugin = { group = "dev.detekt", name = "detekt-gradle-plugin", version.ref = "detekt" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 
 # Convention plugins defined in build-logic
 lifeos-android-application = { id = "lifeos.android.application", version = "unspecified" }
+lifeos-android-library = { id = "lifeos.android.library", version = "unspecified" }
 lifeos-android-compose = { id = "lifeos.android.compose", version = "unspecified" }
+lifeos-kotlin-library = { id = "lifeos.kotlin.library", version = "unspecified" }
 lifeos-quality = { id = "lifeos.quality", version = "unspecified" }

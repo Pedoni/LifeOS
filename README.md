@@ -43,7 +43,9 @@ Serialization, WorkManager, Coil, Vico, MockK and Turbine are planned and
 ## Repository layout
 
 ```
-app/              Android application module (template, to be modularized)
+app/              Android application module (still the Empty Activity template)
+core/             Shared modules: common, domain, data, database, network,
+                  datastore, designsystem, ui, navigation (empty for now)
 build-logic/      Gradle convention plugins
 config/detekt/    detekt rules
 docs/             Product specification, architecture, database, sync, roadmap, decisions

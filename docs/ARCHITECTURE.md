@@ -36,9 +36,13 @@ written into Room, never shown directly.
 Writes: validate, persist locally, mark the record pending, schedule a sync,
 push when connectivity allows. See [SYNC.md](SYNC.md).
 
-## Proposed module structure
+## Module structure
 
-Target layout from the specification, to be created incrementally:
+The nine `core/*` modules exist (empty, compiling) and `:app` depends on all of
+them. `feature/*` modules do not exist yet: each one is created when its
+feature is built. `core:common` and `core:domain` are pure Kotlin (JVM)
+modules; the others are Android libraries (`designsystem`, `ui` and
+`navigation` with Compose). Target layout:
 
 ```
 app/                 composition root, navigation host, Hilt application
@@ -64,13 +68,14 @@ their own data implementation. Shared domain concepts live in `core/domain`.
 ### Dependency rules
 
 - `feature/*` may depend on `core/*`, never on another `feature/*`.
-- `core/domain` depends on nothing else in the project.
-- `core/data` and `core/database`/`core/network` depend on `core/domain`.
+- `core/domain` depends only on `core/common`, and is pure Kotlin.
+- `core/database`, `core/network` and `core/datastore` depend on `core/domain`.
+- `core/data` depends on `core/domain`, `core/database` and `core/network`.
+- `core/ui` depends on `core/designsystem`.
 - `app` is the only module that knows every other module (composition root).
 
-*Open:* whether to create all modules in Phase 0 or extract them as features
-are built. The recommendation is to create them upfront, empty but compiling,
-to establish the boundaries from the start.
+These rules are currently enforced only by the dependency declarations in each
+module and by review; there is no automatic check yet.
 
 ## Extensibility: life modules
 

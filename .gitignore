@@ -13,3 +13,7 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Build output of any module, including build-logic
+build/
+.kotlin/

@@ -112,10 +112,16 @@ in `docs/SYNC.md`.
 ```
 ./gradlew assembleDebug    # build
 ./gradlew test             # JVM unit tests
+./gradlew ktlintCheck      # formatting check
+./gradlew ktlintFormat     # auto-format
+./gradlew detekt           # static analysis
 ```
 
-detekt, ktlint and CI are not configured yet; add their commands here when
-they are introduced.
+CI is not configured yet. Shared build configuration lives in
+`build-logic/convention` (plugins `lifeos.android.application`,
+`lifeos.android.compose`, `lifeos.quality`); change common Android, Compose or
+lint settings there, not in module scripts. detekt rules are in
+`config/detekt/detekt.yml`.
 
 ## Language
 

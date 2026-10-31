@@ -20,6 +20,7 @@ kotlin {
 dependencies {
     // Provided at runtime by the root project, which declares these plugins with `apply false`.
     compileOnly(libs.android.gradlePlugin)
+    compileOnly(libs.kotlin.gradlePlugin)
     compileOnly(libs.kotlin.composeGradlePlugin)
     implementation(libs.ktlint.gradlePlugin)
     implementation(libs.detekt.gradlePlugin)
@@ -30,6 +31,14 @@ gradlePlugin {
         register("androidApplication") {
             id = "lifeos.android.application"
             implementationClass = "AndroidApplicationConventionPlugin"
+        }
+        register("androidLibrary") {
+            id = "lifeos.android.library"
+            implementationClass = "AndroidLibraryConventionPlugin"
+        }
+        register("kotlinLibrary") {
+            id = "lifeos.kotlin.library"
+            implementationClass = "KotlinLibraryConventionPlugin"
         }
         register("androidCompose") {
             id = "lifeos.android.compose"

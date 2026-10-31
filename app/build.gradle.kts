@@ -23,6 +23,15 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.common)
+    implementation(projects.core.domain)
+    implementation(projects.core.data)
+    implementation(projects.core.database)
+    implementation(projects.core.network)
+    implementation(projects.core.datastore)
+    implementation(projects.core.designsystem)
+    implementation(projects.core.ui)
+    implementation(projects.core.navigation)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.ui)

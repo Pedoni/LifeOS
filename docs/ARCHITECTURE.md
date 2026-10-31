@@ -77,6 +77,36 @@ their own data implementation. Shared domain concepts live in `core/domain`.
 These rules are currently enforced only by the dependency declarations in each
 module and by review; there is no automatic check yet.
 
+## Design system
+
+Lives in `core:designsystem` (package `it.edon.lifeos.core.designsystem`). Screens
+never use literal colors, dp values or text styles: they read tokens from
+`LifeOSTheme`.
+
+| Token | Access | Notes |
+|---|---|---|
+| Colors | `LifeOSTheme.colors` | Material 3 `ColorScheme`, "Calma" palette: deep indigo primary, teal accent, cool neutral surfaces; light and dark |
+| Extra colors | `LifeOSTheme.extendedColors` | Task priorities (low, medium, high, urgent) and success. Priority is never conveyed by color alone |
+| Typography | `LifeOSTheme.typography` | Material 3 scale in `sp` (follows font scale), system font for now |
+| Shapes | `LifeOSTheme.shapes` | Soft rounded corners (6 to 28 dp) |
+| Spacing | `LifeOSTheme.spacing` | `xxs` 2 dp to `xxxl` 48 dp, plus `minTouchTarget` (48 dp) |
+| Elevation | `LifeOSTheme.elevation` | Hierarchy mainly through tonal surfaces, not shadows |
+| Motion | `LifeOSTheme.motion` | Short, medium and long durations and a shared easing |
+
+`LifeOSTheme { ... }` applies the theme. The LifeOS palette is always used by
+default; dynamic color (Android 12+) exists as an opt-in parameter, intended to be
+driven by a user preference later.
+
+Base components (`component` package): `LifeOSButton`, `LifeOSTextButton`,
+`LifeOSTextField`, `LifeOSCard` (tonal, no border or shadow), `LifeOSLinearProgress`
+and the screen states `LifeOSLoadingState`, `LifeOSEmptyState`, `LifeOSErrorState`.
+Components receive already-resolved strings; string resources belong to the screens.
+New components are added when a screen needs them. `@Preview` functions in
+`Previews.kt` show them in light and dark.
+
+Not done yet: the Material icon set is not added (only `material-icons-core` comes
+with Compose), no custom font, and no accessibility pass with a screen reader.
+
 ## Extensibility: life modules
 
 After version 1.0.0 new areas (finance, sport, nutrition, journal, work,

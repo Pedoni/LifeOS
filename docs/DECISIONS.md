@@ -82,6 +82,14 @@ when the feature is built, because empty feature modules bring no benefit and
 cost build time. `core:common` and `core:domain` are pure Kotlin (JVM) modules
 with no Android dependency; all other core modules are Android libraries.
 
+### D-15 Visual identity
+
+Direction "Calma": deep indigo primary with a teal accent and cool neutral
+surfaces, so that color is reserved for state (priority, deadlines, progress)
+rather than decoration. The system font is used for now; a bundled font can be
+introduced later. The LifeOS palette is always used by default; dynamic color
+is only an opt-in option. Details in [ARCHITECTURE.md](ARCHITECTURE.md).
+
 ## Proposed
 
 ### D-08 Scope of version 1.0.0

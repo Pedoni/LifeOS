@@ -74,6 +74,14 @@ single module needs exists (application, Compose, quality); library and
 pure-Kotlin plugins are added with the modularization step, to avoid
 speculative code.
 
+### D-10 Modularization
+
+The nine `core/*` modules are created in Phase 0, empty but compiling, to fix
+the boundaries from the start. `feature/*` modules are created one at a time,
+when the feature is built, because empty feature modules bring no benefit and
+cost build time. `core:common` and `core:domain` are pure Kotlin (JVM) modules
+with no Android dependency; all other core modules are Android libraries.
+
 ## Proposed
 
 ### D-08 Scope of version 1.0.0
@@ -89,11 +97,6 @@ Alternative: ship statistics as `1.1.0` to reach the release earlier.
 Proposal: use Supabase Auth from Phase 1, keeping data local in Room until the
 synchronization phase. Alternative: a local implementation behind a domain
 interface in Phase 1 and Supabase in Phase 3.
-
-### D-10 Modularization
-
-Proposal: create all Gradle modules in Phase 0, empty but compiling, to fix the
-boundaries from the start. Alternative: create them as features are built.
 
 ### D-11 Early closed test on Google Play
 

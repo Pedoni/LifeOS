@@ -17,8 +17,8 @@ Gradle configuration.
 ## Current state
 
 The repository contains the Empty Activity template, the build foundation
-(convention plugins, ktlint, detekt) and, in progress, the empty `core/*`
-modules. No product feature exists yet. The Supabase development project exists with its schema applied.
+(convention plugins, ktlint, detekt), the `core/*` modules and, in progress,
+the design system in `core:designsystem`. No product feature exists yet. The Supabase development project exists with its schema applied.
 
 ## Phase 0 - Foundation (target `0.1.0`)
 
@@ -27,8 +27,8 @@ modules. No product feature exists yet. The Supabase development project exists 
 | 0.0 | - | Read-only inspection of the project | done |
 | 0.1 | `docs/project-docs` | README, CLAUDE.md, docs, Supabase SQL scripts | done |
 | 0.2 | `chore/build-foundation` | Version catalog, convention plugins (application, Compose, quality), detekt, ktlint, `.editorconfig`, `.gitattributes` | done |
-| 0.3 | `feature/modularization` | Nine `core/*` modules (empty), library convention plugins, dependency graph. `feature/*` modules are created later, one per feature | in progress |
-| 0.4 | `feature/design-system` | Tokens, Material 3 theme, typography, base components | planned |
+| 0.3 | `feature/modularization` | Nine `core/*` modules (empty), library convention plugins, dependency graph. `feature/*` modules are created later, one per feature | done |
+| 0.4 | `feature/design-system` | Tokens, Material 3 theme, typography, base components | in progress |
 | 0.5 | `feature/navigation` | Navigation Compose, bottom bar, placeholder destinations | planned |
 | 0.6 | `feature/hilt-room-datastore` | Hilt, Room base, DataStore, test infrastructure | planned |
 | 0.7 | `chore/ci` | GitHub Actions: build, test, lint | planned |

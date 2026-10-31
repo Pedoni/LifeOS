@@ -45,7 +45,8 @@ Serialization, WorkManager, Coil, Vico, MockK and Turbine are planned and
 ```
 app/              Android application module (still the Empty Activity template)
 core/             Shared modules: common, domain, data, database, network,
-                  datastore, designsystem, ui, navigation (empty for now)
+                  datastore, designsystem, ui, navigation (only designsystem
+                  has code so far)
 build-logic/      Gradle convention plugins
 config/detekt/    detekt rules
 docs/             Product specification, architecture, database, sync, roadmap, decisions

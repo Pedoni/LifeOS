@@ -83,7 +83,8 @@ honestly what was and was not tested.
 - Official Kotlin conventions; immutable data; data classes for state and
   models; sealed interfaces for UI state and events.
 - No hardcoded strings, colors or spacing in screens: use string resources and
-  the design system tokens.
+  the design system tokens (`LifeOSTheme.colors`, `.spacing`, `.typography`,
+  ...) and the components in `core:designsystem`.
 - Represent expected failures explicitly (network, authentication, validation,
   database, unexpected). Do not swallow exceptions or add generic `catch`
   blocks without a recovery strategy. Never show stack traces to users.

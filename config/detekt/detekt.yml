@@ -4,3 +4,30 @@ naming:
       - Composable
   TopLevelPropertyNaming:
     constantPattern: '[A-Z][A-Za-z0-9]*'
+
+complexity:
+  LongMethod:
+    ignoreAnnotated:
+      - Composable
+  LongParameterList:
+    ignoreAnnotated:
+      - Composable
+  CyclomaticComplexMethod:
+    ignoreAnnotated:
+      - Composable
+  TooManyFunctions:
+    ignoreAnnotated:
+      - Composable
+
+style:
+  MagicNumber:
+    # Design tokens are literal values by definition. The test patterns repeat the defaults,
+    # because setting `excludes` replaces them.
+    excludes:
+      - '**/test/**'
+      - '**/androidTest/**'
+      - '**/commonTest/**'
+      - '**/jvmTest/**'
+      - '**/*.kts'
+      - '**/designsystem/theme/**'
+      - '**/*Preview*.kt'

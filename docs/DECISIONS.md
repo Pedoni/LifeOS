@@ -176,6 +176,30 @@ both without needing two backends:
 - Until then: dedicated test accounts only, no destructive SQL without agreement, and
   `delete_my_account` is tried only on a throwaway user.
 
+### D-21 Authentication foundation
+
+- **Client library:** `supabase-kt` 3.6.0 (Auth) with the Ktor OkHttp engine 3.4.3. It is the
+  last release that the project's Kotlin 2.2.x can read: 3.7 and 3.8 are compiled with
+  Kotlin 2.4, and a compiler reads at most one version ahead. Moving to them needs a Kotlin
+  upgrade (compose, serialization, KSP, Hilt), which is a separate step if it is wanted. The
+  library types stay inside `core:network`.
+- **Session storage:** the session is kept in one file encrypted with AES-256-GCM, with a key
+  in the Android Keystore, inside `noBackupFilesDir` so it is excluded from backups and never
+  restored onto another device. A session that cannot be decrypted or parsed is deleted and
+  the user simply signs in again; no crash. This is a deliberate choice over the library's
+  default plain `SharedPreferences`.
+- **Offline:** if renewing the session fails because the network or server is unavailable, the
+  user stays signed in with the stored session (the library only reports that case as a
+  refresh failure; invalid tokens sign out).
+- **Errors:** expected failures are values, not exceptions: `Outcome<T, E>` in `core:common`
+  and a sealed `AuthError` in the domain. `core:network` translates library and I/O errors
+  into its own `RemoteAuthException`s; `core:data` maps them to `AuthError`. Anything
+  unexpected is not swallowed, except at the network boundary where it becomes `Unknown`
+  (the user is told something went wrong and can retry); cancellation is never swallowed.
+- **Key type:** the client takes the Supabase public key through a single parameter. Whether
+  the `anon` or the `publishable` format is accepted by this library version has not been
+  verified yet; the first real sign-up will show it.
+
 ## Proposed
 
 ### D-12 AI suggestions
@@ -188,8 +212,6 @@ the feature off, only aggregated data is sent, and per-user quotas apply.
 ## Open
 
 - Package layout inside the modules (base package is `it.edon.lifeos`).
-- How to store the authentication session (plain preferences or encrypted with the Android
-  Keystore), to be decided in the authentication foundation step.
 - User-facing behavior on a sync conflict (re-apply or discard).
 - Whether `allowBackup` should stay enabled given the personal data stored.
 - Contract between life modules and the dashboard.

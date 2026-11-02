@@ -40,6 +40,7 @@ What the project actually uses today:
 | Navigation | Navigation Compose 2.10.2 with type-safe routes (Kotlin Serialization plugin) |
 | Dependency injection | Hilt 2.60.1 with KSP 2.3.13 |
 | Persistence | Room 2.8.5, DataStore Preferences 1.3.0 |
+| Backend client | supabase-kt 3.6.0 (Auth) on Ktor 3.4.3 with OkHttp; no screen uses it yet |
 | Async | Kotlin Coroutines 1.11.0 and Flow |
 | Tests | JUnit, MockK 1.14.11, Turbine 1.2.1, coroutines-test, Compose UI testing |
 | Build logic | Gradle convention plugins in [`build-logic`](build-logic) |
@@ -47,8 +48,7 @@ What the project actually uses today:
 | CI | GitHub Actions: lint, static analysis, unit tests, Android lint and build on every pull request |
 | Backend | Supabase project created, schema in [`supabase/sql`](supabase/sql) |
 
-Retrofit/OkHttp, the Supabase client, WorkManager, Coil, Vico and Paging are
-planned and **not yet added**. The Kotlin Serialization plugin is used only for
+Retrofit, WorkManager, Coil, Vico and Paging are planned and **not yet added**. The Kotlin Serialization plugin is used only for
 navigation routes so far.
 
 ## Repository layout

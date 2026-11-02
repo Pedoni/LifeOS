@@ -3,8 +3,8 @@ plugins {
 }
 
 dependencies {
-    implementation(projects.core.common)
-    // Repository contracts expose Flow.
+    // Repository contracts expose Outcome and Flow.
+    api(projects.core.common)
     api(libs.kotlinx.coroutines.core)
     testImplementation(libs.junit)
 }

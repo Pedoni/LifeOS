@@ -68,7 +68,8 @@ their own data implementation. Shared domain concepts live in `core/domain`.
 ### Dependency rules
 
 - `feature/*` may depend on `core/*`, never on another `feature/*`.
-- `core/domain` depends only on `core/common`, and is pure Kotlin.
+- `core/domain` depends only on `core/common` (exposed through its API, since `Outcome` appears
+  in the contracts), and is pure Kotlin.
 - `core/datastore` depends on `core/domain`, because it implements a domain contract
   (`UserPreferencesRepository`).
 - `core/database` and `core/network` know nothing about the domain: they hold the
@@ -169,6 +170,32 @@ from `BuildConfig` and provides it through Hilt (`AppModule`); the network layer
 reads build properties itself. How the values are resolved, for debug and release, is
 described in [DECISIONS.md](DECISIONS.md), D-20. Nothing uses `SupabaseConfig` yet: the
 Supabase client arrives with the authentication foundation step.
+
+## Authentication
+
+Layers, from the inside out:
+
+- **`core:common`:** `Outcome<T, E>` (`Success` or `Failure`), the way expected failures are
+  returned instead of thrown.
+- **`core:domain`:** `AuthRepository` (`authState`, `signUp`, `signIn`, `signOut`,
+  `requestPasswordReset`), `AuthState` (`Loading`, `SignedOut`, `SignedIn(user)`), `AuthUser`
+  (its `id` is the owner stored on every user-owned record), `SignUpResult` (whether the email
+  must be confirmed) and the sealed `AuthError`.
+- **`core:network`:** `AuthRemoteDataSource` and its Supabase implementation, the only place that
+  knows `supabase-kt`. It turns library, HTTP and I/O errors into `RemoteAuthException`s through a
+  pure, tested classifier, and exposes the session state as a `Flow`. The Supabase client, the
+  `Auth` plugin and the data source are provided by `NetworkModule`.
+- **`core:data`:** `AuthRepositoryImpl` maps remote states and exceptions to domain ones.
+
+Session handling is described in [DECISIONS.md](DECISIONS.md), D-21: an encrypted file in
+`noBackupFilesDir` (`EncryptedSessionManager` with a Keystore-backed `SessionCipher`), a user
+who stays signed in offline, and a session that cannot be read is discarded.
+
+Not done yet: no screen uses it, sign-out of local data, Google sign-in (step 1.3), account
+deletion (step 1.4), deep links for email confirmation and password reset (step 1.2). The
+dependency graph of the auth classes is only exercised for real once a screen injects the
+repository; the build compiles and the unit tests pass, but no run against a real Supabase
+project has been made.
 
 ## Persistence conventions
 

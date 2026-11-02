@@ -48,7 +48,7 @@ account identifies the user but nothing is synchronized yet.
 | Step | Branch | Scope | Status |
 |---|---|---|---|
 | 1.0 | `chore/environment-config` | Development and production configuration (Supabase URL and public key from `local.properties`, fallbacks for CI) | in progress |
-| 1.1 | `feature/auth-foundation` | Supabase client, `AuthRepository`, persistent session, current user available to the app; no screens | planned |
+| 1.1 | `feature/auth-foundation` | Supabase client, `AuthRepository`, persistent session, current user available to the app; no screens | in progress |
 | 1.2 | `feature/authentication` | `feature/auth` module: sign up, sign in, password recovery, validation, navigation gate | planned |
 | 1.3 | `feature/google-sign-in` | Google Sign-In (needs configuration on Google Cloud) | planned |
 | 1.4 | `feature/profile` | Profile, avatar, theme preference screen, sign out, account deletion | planned |

@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.lifeos.android.application)
     alias(libs.plugins.lifeos.android.compose)
     alias(libs.plugins.lifeos.android.hilt)
+    alias(libs.plugins.lifeos.android.environment)
 }
 
 android {

@@ -200,6 +200,25 @@ both without needing two backends:
   the `anon` or the `publishable` format is accepted by this library version has not been
   verified yet; the first real sign-up will show it.
 
+### D-22 Sign-up and sign-in
+
+- **Order:** email and password with the navigation gate first (step 1.2); email confirmation
+  and password recovery, which need links that reopen the app, in a separate step (1.2b);
+  Google Sign-In after that.
+- **Password policy:** at least 8 characters and nothing else, since length matters more than
+  composition rules; the password is never trimmed. The minimum length must be set to 8 in the
+  Supabase dashboard too. Signing in only requires a non-empty password.
+- **Display name:** an optional field at sign-up, kept in the user's metadata.
+- **Email confirmation stays on.** Supabase's built-in email service only sends to members of
+  the project's team and at most 2 emails per hour, so tests use the owner's own address (or an
+  account created from the dashboard with "Auto Confirm User"). Disposable addresses need a
+  custom SMTP server, which is also required before the first release; it is set up in step 1.2b.
+- **Temporary sign-out:** the "More" placeholder has a "Sign out" button until the profile
+  screen (step 1.4) replaces it.
+- **Dependencies:** `androidx.hilt:hilt-navigation-compose` 1.4.0 (view models in navigation
+  destinations) and `javax.inject` 1 (only the `@Inject` annotation, so domain use cases can be
+  constructor-injected without depending on Hilt or Android).
+
 ## Proposed
 
 ### D-12 AI suggestions

@@ -11,10 +11,10 @@ Clean Architecture + MVVM + UDF, Room, Hilt, Supabase). It is both a portfolio
 project and a product to publish on Google Play.
 
 - Application ID and namespace: `it.edon.lifeos` (do not change).
-- Gradle modules: `:app` and nine `:core:*` modules (`common`, `network` and `ui`
-  are still empty).
-  `feature/*` modules are created one at a time, when their feature is built
-  (`docs/ARCHITECTURE.md`).
+- Gradle modules: `:app`, nine `:core:*` modules (`ui` is still empty) and
+  `:feature:auth`. `feature/*` modules are created one at a time, when their feature is
+  built, with the `lifeos.android.feature` plugin; a feature never depends on another
+  feature (`docs/ARCHITECTURE.md`).
 - The repository is an existing Android Studio project: preserve and evolve it,
   never recreate it.
 
@@ -137,7 +137,7 @@ process crashed. Run the same Gradle tasks locally before proposing a commit.
 Shared build configuration lives in `build-logic/convention` (plugins
 `lifeos.android.application`, `lifeos.android.library`, `lifeos.kotlin.library`,
 `lifeos.android.compose`, `lifeos.android.hilt`, `lifeos.android.room`,
-`lifeos.android.environment`, `lifeos.quality`); change common Android, Compose or lint settings there, not in
+`lifeos.android.environment`, `lifeos.android.feature`, `lifeos.quality`); change common Android, Compose or lint settings there, not in
 module scripts. Modules reference each other with type-safe accessors
 (`projects.core.domain`). detekt rules are in `config/detekt/detekt.yml`.
 

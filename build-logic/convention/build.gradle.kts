@@ -22,6 +22,7 @@ dependencies {
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)
     compileOnly(libs.kotlin.composeGradlePlugin)
+    compileOnly(libs.ksp.gradlePlugin)
     implementation(libs.ktlint.gradlePlugin)
     implementation(libs.detekt.gradlePlugin)
 }
@@ -43,6 +44,14 @@ gradlePlugin {
         register("androidCompose") {
             id = "lifeos.android.compose"
             implementationClass = "AndroidComposeConventionPlugin"
+        }
+        register("androidHilt") {
+            id = "lifeos.android.hilt"
+            implementationClass = "AndroidHiltConventionPlugin"
+        }
+        register("androidRoom") {
+            id = "lifeos.android.room"
+            implementationClass = "AndroidRoomConventionPlugin"
         }
         register("quality") {
             id = "lifeos.quality"

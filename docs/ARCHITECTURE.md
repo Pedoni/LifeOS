@@ -223,4 +223,6 @@ annotated with `@Parcelize` under AGP 9; entities here are never `Parcelable`.
   where behavior matters. Tests must not depend on the operating system: DataStore
   replaces its file by renaming a temporary one, which fails on Windows JVMs, so the
   preferences tests use an in-memory `DataStore`.
-- Planned: GitHub Actions for CI.
+- CI: GitHub Actions, one job on `ubuntu-latest` (JDK 25, Gradle cache). It runs
+  formatting and static analysis, JVM unit tests, Android lint, the debug build and the
+  compilation of the instrumented tests. Instrumented tests are not run in CI yet.

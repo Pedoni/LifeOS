@@ -1,5 +1,7 @@
 # LifeOS
 
+[![CI](https://github.com/Pedoni/LifeOS/actions/workflows/ci.yml/badge.svg)](https://github.com/Pedoni/LifeOS/actions/workflows/ci.yml)
+
 LifeOS is an Android app that brings the different areas of everyday life into
 a single place: tasks, projects, habits, goals, calendar and statistics. It is
 designed as a personal command center rather than a plain task manager, with an
@@ -39,6 +41,7 @@ What the project actually uses today:
 | Tests | JUnit, MockK 1.14.11, Turbine 1.2.1, coroutines-test, Compose UI testing |
 | Build logic | Gradle convention plugins in [`build-logic`](build-logic) |
 | Code quality | ktlint 1.8.0, detekt 2.0.0-alpha.6 (pre-release, see [DECISIONS.md](docs/DECISIONS.md)) |
+| CI | GitHub Actions: lint, static analysis, unit tests, Android lint and build on every pull request |
 | Backend | Supabase project created, schema in [`supabase/sql`](supabase/sql) |
 
 Retrofit/OkHttp, the Supabase client, WorkManager, Coil, Vico and Paging are

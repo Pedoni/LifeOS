@@ -120,13 +120,19 @@ in `docs/SYNC.md`.
 ./gradlew detekt           # static analysis
 ```
 
-CI is not configured yet. Shared build configuration lives in
-`build-logic/convention` (plugins `lifeos.android.application`,
-`lifeos.android.library`, `lifeos.kotlin.library`, `lifeos.android.compose`,
-`lifeos.android.hilt`, `lifeos.android.room`, `lifeos.quality`); change common Android, Compose or lint settings there, not
-in module scripts. Modules reference each other with type-safe accessors
-(`projects.core.domain`). detekt rules are in
-`config/detekt/detekt.yml`.
+CI (`.github/workflows/ci.yml`) runs `ktlintCheck detekt`, `testDebugUnitTest`,
+`lintDebug`, `assembleDebug` and `compileDebugAndroidTestKotlin` on every pull request
+and on pushes to `develop` and `master`. It does not run the instrumented tests: those
+need an emulator and are run locally; when running them, read the result XML in
+`build/outputs/androidTest-results`, because Gradle reports success even when the test
+process crashed. Run the same Gradle tasks locally before proposing a commit.
+
+Shared build configuration lives in `build-logic/convention` (plugins
+`lifeos.android.application`, `lifeos.android.library`, `lifeos.kotlin.library`,
+`lifeos.android.compose`, `lifeos.android.hilt`, `lifeos.android.room`,
+`lifeos.quality`); change common Android, Compose or lint settings there, not in
+module scripts. Modules reference each other with type-safe accessors
+(`projects.core.domain`). detekt rules are in `config/detekt/detekt.yml`.
 
 ## Language
 

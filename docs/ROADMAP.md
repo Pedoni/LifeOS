@@ -17,10 +17,10 @@ Gradle configuration.
 ## Current state
 
 The repository contains the build foundation (convention plugins, ktlint, detekt),
-the `core/*` modules, the design system, the navigation shell and, in progress, the
-persistence and dependency injection foundation (Hilt, Room, DataStore). Every
-navigation destination is a placeholder: no product feature exists yet. The Supabase
-development project exists with its schema applied.
+the `core/*` modules, the design system, the navigation shell, the persistence and
+dependency injection foundation (Hilt, Room, DataStore) and, in progress, the CI
+workflow. Every navigation destination is a placeholder: no product feature exists
+yet. The Supabase development project exists with its schema applied.
 
 ## Phase 0 - Foundation (target `0.1.0`)
 
@@ -32,8 +32,8 @@ development project exists with its schema applied.
 | 0.3 | `feature/modularization` | Nine `core/*` modules (empty), library convention plugins, dependency graph. `feature/*` modules are created later, one per feature | done |
 | 0.4 | `feature/design-system` | Tokens, Material 3 theme, typography, base components | done |
 | 0.5 | `feature/navigation` | Navigation Compose, bottom bar (5 tabs), deep links, placeholder destinations | done |
-| 0.6 | `feature/hilt-room-datastore` | Hilt, Room with the first entity (`categories`) as reference, DataStore with the theme preference, test infrastructure | in progress |
-| 0.7 | `chore/ci` | GitHub Actions: build, test, lint | planned |
+| 0.6 | `feature/hilt-room-datastore` | Hilt, Room with the first entity (`categories`) as reference, DataStore with the theme preference, test infrastructure | done |
+| 0.7 | `chore/ci` | GitHub Actions: formatting, static analysis, unit tests, lint, build | in progress (first run on GitHub pending) |
 
 ## Phase 1 - Core application (target `0.2.0`)
 

@@ -116,6 +116,19 @@ collection, as the specification requires, and `androidx.test:runner` 1.7.0 for 
 instrumented tests of library modules (the app gets it through Espresso). The Room
 tests were run on an emulator (Pixel 3a, API 31): 5 of 5 passed.
 
+### D-18 Continuous integration
+
+GitHub Actions, a single job on `ubuntu-latest` so Gradle's cache is used as well as
+possible, running on pull requests and on pushes to `develop` and `master`: formatting
+and static analysis, JVM unit tests, Android lint, the debug build and the compilation of
+the instrumented tests. Actions are pinned by major version (for example `@v7`), not by
+commit hash; hashes can be adopted later if the supply chain becomes a concern.
+Permissions are read-only and no secrets are used yet. Instrumented tests (emulator) are
+not run in CI for now. The workflow could not be run before pushing; the `gradlew` file
+mode was fixed to executable, because it had been created on Windows without the bit.
+Requiring a green CI before merging is a repository setting on GitHub, left to the
+project owner.
+
 ## Proposed
 
 ### D-08 Scope of version 1.0.0

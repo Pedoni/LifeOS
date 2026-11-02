@@ -90,6 +90,17 @@ rather than decoration. The system font is used for now; a bundled font can be
 introduced later. The LifeOS palette is always used by default; dynamic color
 is only an opt-in option. Details in [ARCHITECTURE.md](ARCHITECTURE.md).
 
+### D-16 Navigation
+
+Navigation Compose 2.10.2 with type-safe routes (Kotlin Serialization), chosen
+over Navigation 3 because the specification asks for nested graphs and deep
+links and Navigation Compose is the more mature option for them. The bottom
+bar has five tabs (Home, Tasks, Calendar, Habits, More); *More* is the hub for
+Projects, Goals, Statistics, Profile and the future modules. Icons come from
+`material-icons-extended`, whose unused icons are removed by R8 in release builds.
+Destinations without a feature yet show an explicit placeholder. See
+[ARCHITECTURE.md](ARCHITECTURE.md).
+
 ## Proposed
 
 ### D-08 Scope of version 1.0.0

@@ -32,13 +32,14 @@ What the project actually uses today:
 | UI | Jetpack Compose (BOM 2026.02.01), Material 3 |
 | Build | Android Gradle Plugin 9.5.0, Gradle 9.6.0 |
 | Android | `minSdk` 29, `targetSdk` / `compileSdk` 37 |
+| Navigation | Navigation Compose 2.10.2 with type-safe routes (Kotlin Serialization plugin) |
 | Build logic | Gradle convention plugins in [`build-logic`](build-logic) |
 | Code quality | ktlint 1.8.0, detekt 2.0.0-alpha.6 (pre-release, see [DECISIONS.md](docs/DECISIONS.md)) |
 | Backend | Supabase project created, schema in [`supabase/sql`](supabase/sql) |
 
-Hilt, Room, DataStore, Navigation Compose, Coroutines, Retrofit/OkHttp, Kotlin
-Serialization, WorkManager, Coil, Vico, MockK and Turbine are planned and
-**not yet added**.
+Hilt, Room, DataStore, Coroutines, Retrofit/OkHttp, WorkManager, Coil, Vico,
+MockK and Turbine are planned and **not yet added**. The Kotlin Serialization
+plugin is used only for navigation routes so far.
 
 ## Repository layout
 
@@ -46,7 +47,7 @@ Serialization, WorkManager, Coil, Vico, MockK and Turbine are planned and
 app/              Android application module (still the Empty Activity template)
 core/             Shared modules: common, domain, data, database, network,
                   datastore, designsystem, ui, navigation (only designsystem
-                  has code so far)
+                  and navigation have code so far)
 build-logic/      Gradle convention plugins
 config/detekt/    detekt rules
 docs/             Product specification, architecture, database, sync, roadmap, decisions

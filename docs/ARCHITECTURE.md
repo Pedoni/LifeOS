@@ -107,6 +107,31 @@ New components are added when a screen needs them. `@Preview` functions in
 Not done yet: the Material icon set is not added (only `material-icons-core` comes
 with Compose), no custom font, and no accessibility pass with a screen reader.
 
+## Navigation
+
+Navigation Compose with type-safe routes: each destination is a `@Serializable`
+object or class, never a string.
+
+- **Bottom bar, five tabs:** Home, Tasks, Calendar, Habits, More. Projects, Goals,
+  Statistics and Profile/settings are meant to live under *More*, which also gives
+  room to the future life modules without changing the bar.
+- **`core:navigation`:** the routes of the top-level destinations, the
+  `TopLevelDestination` enum (label, icons, deep link) and helpers:
+  `navigateToTopLevel` (one copy of each tab, state saved and restored per tab) and
+  `isInHierarchyOf` (selection also when a detail screen of a tab is open).
+- **`core:designsystem`:** `LifeOSNavigationBar` and `LifeOSNavigationBarItem`; they
+  know nothing about destinations.
+- **`app`:** `LifeOSApp` (scaffold and bar) and `LifeOSNavHost` (graph). The bar is
+  shown only on top-level destinations. Feature modules will contribute their own
+  graphs to the host; they never depend on each other.
+- **Deep links:** scheme `lifeos://` with `home`, `tasks`, `calendar`, `habits` and
+  `more`, declared in the manifest and in the graph. The activity is `singleTop` so a
+  link opened while the app is running reuses it. Links only select a tab and carry no
+  data; links to inner screens will need validation of their arguments.
+
+Status: every destination is a **placeholder** (`LifeOSEmptyState` saying the section
+is not available yet). Each one is replaced when its feature is built.
+
 ## Extensibility: life modules
 
 After version 1.0.0 new areas (finance, sport, nutrition, journal, work,

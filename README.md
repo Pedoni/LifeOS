@@ -7,10 +7,13 @@ a single place: tasks, projects, habits, goals, calendar and statistics. It is
 designed as a personal command center rather than a plain task manager, with an
 offline-first architecture and a Supabase backend.
 
-> **Status: early development.** The repository currently contains the Android
-> Studio Empty Activity template (Jetpack Compose) plus the project
-> documentation and the backend SQL scripts. No product feature is implemented
-> yet. See [docs/ROADMAP.md](docs/ROADMAP.md) for the real state of each phase.
+> **Status: version 0.1.0, foundation only.** The technical base is in place:
+> a modular Clean Architecture project, a design system, bottom-bar navigation,
+> dependency injection (Hilt), local persistence (Room and DataStore), the
+> backend schema on Supabase and a CI pipeline. **No product feature is
+> implemented yet**: every screen is still a placeholder. Next is the core
+> application (authentication, profile, tasks, projects, dashboard). See
+> [docs/ROADMAP.md](docs/ROADMAP.md) for the real state of each phase.
 
 ## Goals
 

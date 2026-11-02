@@ -9,8 +9,10 @@ import java.io.IOException
 import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.put
 
 private const val DISPLAY_NAME_KEY = "full_name"
 
@@ -32,10 +34,15 @@ internal class SupabaseAuthDataSource(private val auth: Auth) : AuthRemoteDataSo
         }
     }
 
-    override suspend fun signUp(email: String, password: String): RemoteSignUp = remoteCall {
+    override suspend fun signUp(
+        email: String,
+        password: String,
+        displayName: String?
+    ): RemoteSignUp = remoteCall {
         auth.signUpWith(Email) {
             this.email = email
             this.password = password
+            displayName?.let { name -> data = buildJsonObject { put(DISPLAY_NAME_KEY, name) } }
         }
         // Without a session the account is waiting for its email to be confirmed.
         RemoteSignUp(requiresEmailConfirmation = auth.currentSessionOrNull() == null)

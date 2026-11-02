@@ -16,11 +16,16 @@ import it.edon.lifeos.core.navigation.TopLevelDestination
 import it.edon.lifeos.core.navigation.deepLink
 
 /**
- * Navigation graph of the app. Every destination is still a placeholder: feature modules will
- * contribute their own graphs here as they are built.
+ * Navigation graph of the signed-in app. Every destination is still a placeholder: feature
+ * modules will contribute their own graphs here as they are built. [onSignOut] is offered by the
+ * "More" placeholder until the profile screen takes over that job.
  */
 @Composable
-fun LifeOSNavHost(navController: NavHostController, modifier: Modifier = Modifier) {
+fun LifeOSNavHost(
+    navController: NavHostController,
+    onSignOut: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     NavHost(
         navController = navController,
         startDestination = HomeRoute,
@@ -30,16 +35,17 @@ fun LifeOSNavHost(navController: NavHostController, modifier: Modifier = Modifie
         placeholderDestination<TasksRoute>(TopLevelDestination.Tasks)
         placeholderDestination<CalendarRoute>(TopLevelDestination.Calendar)
         placeholderDestination<HabitsRoute>(TopLevelDestination.Habits)
-        placeholderDestination<MoreRoute>(TopLevelDestination.More)
+        placeholderDestination<MoreRoute>(TopLevelDestination.More, onSignOut)
     }
 }
 
 private inline fun <reified T : Any> NavGraphBuilder.placeholderDestination(
-    destination: TopLevelDestination
+    destination: TopLevelDestination,
+    noinline onSignOut: (() -> Unit)? = null
 ) {
     composable<T>(
         deepLinks = listOf(navDeepLink<T>(basePath = destination.deepLink))
     ) {
-        PlaceholderScreen(destination = destination)
+        PlaceholderScreen(destination = destination, onSignOut = onSignOut)
     }
 }

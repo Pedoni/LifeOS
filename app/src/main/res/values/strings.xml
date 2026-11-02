@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">LifeOS</string>
     <string name="placeholder_message">This section is not available yet.</string>
+    <string name="placeholder_sign_out">Sign out</string>
 </resources>

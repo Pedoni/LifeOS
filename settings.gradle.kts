@@ -1,4 +1,5 @@
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google {
             content {
@@ -22,5 +23,16 @@ dependencyResolutionManagement {
     }
 }
 
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 rootProject.name = "LifeOS"
 include(":app")
+include(":core:common")
+include(":core:domain")
+include(":core:data")
+include(":core:database")
+include(":core:network")
+include(":core:datastore")
+include(":core:designsystem")
+include(":core:ui")
+include(":core:navigation")

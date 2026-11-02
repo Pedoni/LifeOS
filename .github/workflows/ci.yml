@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [develop, master]
+  push:
+    branches: [develop, master]
+
+# A newer run on the same branch makes the older one pointless.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v7
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 25
+
+      # Caches Gradle dependencies and build state between runs.
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Check formatting and static analysis
+        run: ./gradlew ktlintCheck detekt --console=plain
+
+      - name: Run unit tests
+        run: ./gradlew testDebugUnitTest --console=plain
+
+      - name: Run Android lint
+        run: ./gradlew lintDebug --console=plain
+
+      - name: Build the app and compile the instrumented tests
+        run: ./gradlew assembleDebug compileDebugAndroidTestKotlin --console=plain
+
+      - name: Upload reports
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: reports
+          path: |
+            **/build/reports/
+            **/build/test-results/
+          retention-days: 7

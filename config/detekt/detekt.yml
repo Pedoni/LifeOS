@@ -3,7 +3,7 @@ naming:
     ignoreAnnotated:
       - Composable
   TopLevelPropertyNaming:
-    constantPattern: '[A-Z][A-Za-z0-9]*'
+    constantPattern: '[A-Z][A-Za-z0-9_]*'
 
 complexity:
   LongMethod:

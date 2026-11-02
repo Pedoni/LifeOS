@@ -105,6 +105,13 @@ honestly what was and was not tested.
 
 ## Backend
 
+There is a single Supabase project (`docs/DECISIONS.md`, D-20): no destructive SQL,
+and no tests of destructive functions such as `delete_my_account` on real accounts,
+without asking first. The Supabase URL and public key are read from
+`local.properties` or environment variables by the `lifeos.android.environment` plugin
+and exposed to the app as `SupabaseConfig`; never ask for them in the chat and never
+write real values in a file that is committed.
+
 SQL lives in `supabase/sql/` and is applied manually in the Supabase SQL
 Editor, in numeric order. Any schema change must update `docs/DATABASE.md` and
 be added as a new numbered script. The sync contract (`push_rows`) is described
@@ -130,7 +137,7 @@ process crashed. Run the same Gradle tasks locally before proposing a commit.
 Shared build configuration lives in `build-logic/convention` (plugins
 `lifeos.android.application`, `lifeos.android.library`, `lifeos.kotlin.library`,
 `lifeos.android.compose`, `lifeos.android.hilt`, `lifeos.android.room`,
-`lifeos.quality`); change common Android, Compose or lint settings there, not in
+`lifeos.android.environment`, `lifeos.quality`); change common Android, Compose or lint settings there, not in
 module scripts. Modules reference each other with type-safe accessors
 (`projects.core.domain`). detekt rules are in `config/detekt/detekt.yml`.
 

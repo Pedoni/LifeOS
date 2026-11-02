@@ -80,16 +80,29 @@ On Windows use `gradlew.bat`.
 
 ### Backend
 
-The backend runs on Supabase. To set up a development project, create it in
-the Supabase dashboard and run, in order, in the SQL Editor:
+The backend runs on Supabase. To set up a project, create it in the Supabase
+dashboard and run, in order, in the SQL Editor:
 
 1. [`supabase/sql/001_schema.sql`](supabase/sql/001_schema.sql)
 2. [`supabase/sql/002_functions.sql`](supabase/sql/002_functions.sql)
 
-The app will read the project URL and the public (anon) key from
-`local.properties`, which is ignored by Git. This configuration is not
-implemented yet. Never commit credentials, and never put a `service_role` key
-in the app.
+The app reads the project URL and the public (anon) key at build time from
+`local.properties`, which is ignored by Git:
+
+```
+supabase.url=https://<project>.supabase.co
+supabase.anonKey=<public anon key>
+
+# Optional: used by debug builds only, to point at another project
+supabase.dev.url=
+supabase.dev.anonKey=
+```
+
+The same values can be given as the environment variables `SUPABASE_URL`,
+`SUPABASE_ANON_KEY`, `SUPABASE_DEV_URL` and `SUPABASE_DEV_ANON_KEY` (for CI).
+A debug build without them still compiles but cannot reach a backend; a release
+build without real values fails. Never commit credentials, and never put a
+`service_role` key in the app. See [docs/DECISIONS.md](docs/DECISIONS.md), D-20.
 
 ## Workflow
 

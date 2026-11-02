@@ -44,7 +44,7 @@ journal) are added afterwards as independent modules, one at a time.
 
 ### D-06 Backend
 
-Supabase is the backend. A development project (`lifeos-dev`) exists. The
+Supabase is the backend, with a single project (see D-20). The
 schema (`001_schema.sql`) was applied; its design choices are documented in
 [DATABASE.md](DATABASE.md): relational model with composite same-owner foreign
 keys, RLS on every table, tombstones, server-side `updated_at`, `check`
@@ -155,6 +155,26 @@ readiness phase. The decision may be revisited if release problems are expected.
 Retrofit and OkHttp are not added for now. The Supabase Kotlin client already covers
 authentication, database and storage with its own networking; Retrofit will be introduced
 only if the app needs to call other REST APIs.
+
+### D-20 Environments
+
+There is a single Supabase project and no second one will be created for now. The
+specification asks for development and production configuration, so the app supports
+both without needing two backends:
+
+- Values come from `local.properties`, then from environment variables (for CI), never
+  from the repository. `supabase.url` and `supabase.anonKey` are the main ones;
+  `supabase.dev.url` and `supabase.dev.anonKey` are optional and used only by debug builds,
+  which otherwise fall back to the main values.
+- A debug build with no value still compiles (placeholders, no backend reachable), so a
+  clone and the CI need no secret. A release build without real values, or with a
+  non-HTTPS URL, fails instead of shipping placeholders.
+- While there are no real users the single project works as the development environment.
+  A clean production project is created before the first release (run the two SQL
+  scripts), and the existing one then stays as the test environment. A local Supabase
+  (Supabase CLI with Docker) can be added later for destructive tests.
+- Until then: dedicated test accounts only, no destructive SQL without agreement, and
+  `delete_my_account` is tried only on a throwaway user.
 
 ## Proposed
 

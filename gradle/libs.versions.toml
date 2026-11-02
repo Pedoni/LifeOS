@@ -75,6 +75,7 @@ hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 lifeos-android-application = { id = "lifeos.android.application", version = "unspecified" }
 lifeos-android-library = { id = "lifeos.android.library", version = "unspecified" }
 lifeos-android-compose = { id = "lifeos.android.compose", version = "unspecified" }
+lifeos-android-environment = { id = "lifeos.android.environment", version = "unspecified" }
 lifeos-android-hilt = { id = "lifeos.android.hilt", version = "unspecified" }
 lifeos-android-room = { id = "lifeos.android.room", version = "unspecified" }
 lifeos-kotlin-library = { id = "lifeos.kotlin.library", version = "unspecified" }

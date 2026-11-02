@@ -45,6 +45,10 @@ gradlePlugin {
             id = "lifeos.android.compose"
             implementationClass = "AndroidComposeConventionPlugin"
         }
+        register("androidEnvironment") {
+            id = "lifeos.android.environment"
+            implementationClass = "AndroidEnvironmentConventionPlugin"
+        }
         register("androidHilt") {
             id = "lifeos.android.hilt"
             implementationClass = "AndroidHiltConventionPlugin"

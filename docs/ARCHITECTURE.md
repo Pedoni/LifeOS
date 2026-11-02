@@ -161,6 +161,15 @@ in ViewModels. Each module that owns an implementation also owns its Hilt module
 Implementations are `internal` to their module; only the domain interface is visible
 to the rest of the app.
 
+## Configuration
+
+The Supabase URL and public key reach the app as `SupabaseConfig` (`core:network`), a
+class that rejects blank values and hides the key in its string form. `app` builds it
+from `BuildConfig` and provides it through Hilt (`AppModule`); the network layer never
+reads build properties itself. How the values are resolved, for debug and release, is
+described in [DECISIONS.md](DECISIONS.md), D-20. Nothing uses `SupabaseConfig` yet: the
+Supabase client arrives with the authentication foundation step.
+
 ## Persistence conventions
 
 `Category` is the first end-to-end example and the template for the other synchronized
@@ -204,6 +213,7 @@ Version catalog in `gradle/libs.versions.toml`. Convention plugins in
 | `lifeos.android.compose` | Compose compiler plugin, `buildFeatures.compose`, Compose BOM (application and library modules) |
 | `lifeos.android.hilt` | KSP, the Hilt plugin, `hilt-android` and the Hilt compiler |
 | `lifeos.android.room` | KSP, Room runtime and compiler, schema export to `schemas/` |
+| `lifeos.android.environment` | Supabase URL and public key as `BuildConfig` fields (debug and release), from `local.properties` or environment variables; fails a release build without real values |
 | `lifeos.quality` | ktlint and detekt configuration |
 
 The project uses AGP 9.x, which bundles Kotlin support, so `kapt` is not used and

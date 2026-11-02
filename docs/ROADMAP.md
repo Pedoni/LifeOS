@@ -20,7 +20,7 @@ The repository contains the build foundation (convention plugins, ktlint, detekt
 the `core/*` modules, the design system, the navigation shell, the persistence and
 dependency injection foundation (Hilt, Room, DataStore) and the CI workflow
 (GitHub Actions). Every navigation destination is a placeholder: no product feature
-exists yet. The Supabase development project exists with its schema applied. The app
+exists yet. The Supabase project exists with its schema applied. The app
 version is `0.1.0` (`versionCode` 1).
 
 ## Phase 0 - Foundation (target `0.1.0`)
@@ -47,7 +47,7 @@ account identifies the user but nothing is synchronized yet.
 
 | Step | Branch | Scope | Status |
 |---|---|---|---|
-| 1.0 | `chore/environment-config` | Development and production configuration (Supabase URL and public key from `local.properties`, fallbacks for CI) | planned |
+| 1.0 | `chore/environment-config` | Development and production configuration (Supabase URL and public key from `local.properties`, fallbacks for CI) | in progress |
 | 1.1 | `feature/auth-foundation` | Supabase client, `AuthRepository`, persistent session, current user available to the app; no screens | planned |
 | 1.2 | `feature/authentication` | `feature/auth` module: sign up, sign in, password recovery, validation, navigation gate | planned |
 | 1.3 | `feature/google-sign-in` | Google Sign-In (needs configuration on Google Cloud) | planned |

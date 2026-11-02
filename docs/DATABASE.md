@@ -3,11 +3,11 @@
 The backend schema is in [`supabase/sql/001_schema.sql`](../supabase/sql/001_schema.sql)
 and the RPC functions in [`002_functions.sql`](../supabase/sql/002_functions.sql).
 
-**Status.** Both scripts were applied to the Supabase development project
-(`lifeos-dev`) and `push_rows` was verified manually in the SQL Editor (insert,
-idempotent retry, update, conflict, per-row error). `delete_my_account` and the
-email trigger are created but not yet exercised. The Room (local) schema does
-not exist yet.
+**Status.** Both scripts were applied to the project's single Supabase project (there is
+no separate development one, see [DECISIONS.md](DECISIONS.md), D-20) and `push_rows` was
+verified manually in the SQL Editor (insert, idempotent retry, update, conflict, per-row
+error). `delete_my_account` and the email trigger are created but not yet exercised. The
+local (Room) schema is described below.
 
 ## Principles
 

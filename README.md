@@ -33,21 +33,25 @@ What the project actually uses today:
 | Build | Android Gradle Plugin 9.5.0, Gradle 9.6.0 |
 | Android | `minSdk` 29, `targetSdk` / `compileSdk` 37 |
 | Navigation | Navigation Compose 2.10.2 with type-safe routes (Kotlin Serialization plugin) |
+| Dependency injection | Hilt 2.60.1 with KSP 2.3.13 |
+| Persistence | Room 2.8.5, DataStore Preferences 1.3.0 |
+| Async | Kotlin Coroutines 1.11.0 and Flow |
+| Tests | JUnit, MockK 1.14.11, Turbine 1.2.1, coroutines-test, Compose UI testing |
 | Build logic | Gradle convention plugins in [`build-logic`](build-logic) |
 | Code quality | ktlint 1.8.0, detekt 2.0.0-alpha.6 (pre-release, see [DECISIONS.md](docs/DECISIONS.md)) |
 | Backend | Supabase project created, schema in [`supabase/sql`](supabase/sql) |
 
-Hilt, Room, DataStore, Coroutines, Retrofit/OkHttp, WorkManager, Coil, Vico,
-MockK and Turbine are planned and **not yet added**. The Kotlin Serialization
-plugin is used only for navigation routes so far.
+Retrofit/OkHttp, the Supabase client, WorkManager, Coil, Vico and Paging are
+planned and **not yet added**. The Kotlin Serialization plugin is used only for
+navigation routes so far.
 
 ## Repository layout
 
 ```
-app/              Android application module (still the Empty Activity template)
+app/              Android application module (navigation shell, placeholder screens)
 core/             Shared modules: common, domain, data, database, network,
-                  datastore, designsystem, ui, navigation (only designsystem
-                  and navigation have code so far)
+                  datastore, designsystem, ui, navigation (common, network
+                  and ui are still empty)
 build-logic/      Gradle convention plugins
 config/detekt/    detekt rules
 docs/             Product specification, architecture, database, sync, roadmap, decisions

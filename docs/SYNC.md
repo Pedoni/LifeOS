@@ -33,6 +33,12 @@ No normal operation requires a network connection.
 Kept in Room only (not in the backend): `SYNCED`, `PENDING_UPLOAD`,
 `PENDING_DELETE`, `SYNC_ERROR`.
 
+What the local layer already does (implemented for `categories`, see
+[DATABASE.md](DATABASE.md)): saving a row marks it `PENDING_UPLOAD` and keeps its
+`remoteUpdatedAt`; deleting a row that never reached the server removes it, deleting a
+synced one leaves a tombstone marked `PENDING_DELETE`. Pushing, pulling and updating the
+status from the server response are not implemented.
+
 ## Push
 
 The client calls `push_rows(p_table, p_rows)` with a batch of **complete** rows

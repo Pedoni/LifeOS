@@ -101,6 +101,21 @@ Projects, Goals, Statistics, Profile and the future modules. Icons come from
 Destinations without a feature yet show an explicit placeholder. See
 [ARCHITECTURE.md](ARCHITECTURE.md).
 
+### D-17 Dependency injection and persistence foundation
+
+Hilt 2.60.1 with KSP 2.3.13, Room 2.8.5 and DataStore Preferences 1.3.0, plus
+coroutines 1.11.0, MockK 1.14.11 and Turbine 1.2.1 for tests. Room 3 is still alpha
+and is not used. The foundation is demonstrated end to end with two real but minimal
+pieces: the `categories` table (reference for the conventions of every synchronized
+entity: owner, tombstone, local sync state, exact server timestamp) and the theme
+preference. `core:database` and `core:network` do not depend on the domain; mapping
+happens in `core:data`. Details in [ARCHITECTURE.md](ARCHITECTURE.md) and
+[DATABASE.md](DATABASE.md). `androidx.lifecycle:lifecycle-runtime-compose`
+(same version as the other lifecycle artifacts) was added for lifecycle-aware state
+collection, as the specification requires, and `androidx.test:runner` 1.7.0 for the
+instrumented tests of library modules (the app gets it through Espresso). The Room
+tests were run on an emulator (Pixel 3a, API 31): 5 of 5 passed.
+
 ## Proposed
 
 ### D-08 Scope of version 1.0.0
@@ -134,11 +149,6 @@ the feature off, only aggregated data is sent, and per-user quotas apply.
 - Package layout inside the modules (base package is `it.edon.lifeos`).
 - Whether Retrofit is needed, given that the Supabase Kotlin client has its own
   networking.
-- Compatibility of Hilt, Room and KSP with AGP 9.5 and Kotlin 2.2.10: sources
-  indicate it should work (KSP 2.3.6 or newer, Hilt 2.59 or newer) but it has
-  to be verified with a real build in the step that adds them. A known open
-  KSP bug affects Room entities annotated with `@Parcelize` under AGP 9, which
-  the architecture avoids by keeping entities separate from domain models.
 - User-facing behavior on a sync conflict (re-apply or discard).
 - Whether `allowBackup` should stay enabled given the personal data stored.
 - Contract between life modules and the dashboard.

@@ -38,10 +38,10 @@ push when connectivity allows. See [SYNC.md](SYNC.md).
 
 ## Module structure
 
-The nine `core/*` modules exist (empty, compiling) and `:app` depends on all of
-them. `feature/*` modules do not exist yet: each one is created when its
-feature is built. `core:common` and `core:domain` are pure Kotlin (JVM)
-modules; the others are Android libraries (`designsystem`, `ui` and
+The nine `core/*` modules exist and `:app` depends on all of them. `common`,
+`network` and `ui` are still empty. `feature/*` modules do not exist yet: each one
+is created when its feature is built. `core:common` and `core:domain` are pure
+Kotlin (JVM) modules; the others are Android libraries (`designsystem`, `ui` and
 `navigation` with Compose). Target layout:
 
 ```
@@ -69,7 +69,10 @@ their own data implementation. Shared domain concepts live in `core/domain`.
 
 - `feature/*` may depend on `core/*`, never on another `feature/*`.
 - `core/domain` depends only on `core/common`, and is pure Kotlin.
-- `core/database`, `core/network` and `core/datastore` depend on `core/domain`.
+- `core/datastore` depends on `core/domain`, because it implements a domain contract
+  (`UserPreferencesRepository`).
+- `core/database` and `core/network` know nothing about the domain: they hold the
+  persistence and transport models. The mapping to domain models happens in `core/data`.
 - `core/data` depends on `core/domain`, `core/database` and `core/network`.
 - `core/ui` depends on `core/designsystem`.
 - `app` is the only module that knows every other module (composition root).
@@ -144,9 +147,42 @@ dashboard is built.
 
 ## Dependency injection
 
-Hilt, with constructor injection and Hilt modules for interface bindings and
-for third-party objects (Room, Supabase client). Appropriate scopes; no service
-locators or manual construction in ViewModels.
+Hilt (with KSP), constructor injection, no service locators or manual construction
+in ViewModels. Each module that owns an implementation also owns its Hilt module:
+
+- `core:database`: `LifeOSDatabase` (singleton) and the DAOs.
+- `core:data`: binds `CategoryRepository` to its implementation and provides `Clock`
+  (injected so time-dependent logic can be tested).
+- `core:datastore`: the preferences `DataStore` (singleton) and the binding of
+  `UserPreferencesRepository`.
+- `app`: `LifeOSApplication` (`@HiltAndroidApp`), `MainActivity` (`@AndroidEntryPoint`)
+  and `MainViewModel` (`@HiltViewModel`).
+
+Implementations are `internal` to their module; only the domain interface is visible
+to the rest of the app.
+
+## Persistence conventions
+
+`Category` is the first end-to-end example and the template for the other synchronized
+entities.
+
+- **Domain** (`core:domain`): `Category` is an immutable data class that checks the same
+  rules as the backend constraints, and `CategoryRepository` is an interface returning
+  `Flow`. No persistence detail (tombstones, sync state) appears in the domain model.
+- **Room** (`core:database`): `CategoryEntity` carries owner, timestamps in epoch
+  milliseconds, `deletedAt` (tombstone), `syncStatus` and `remoteUpdatedAt` (see
+  [DATABASE.md](DATABASE.md)). The DAO returns only non-deleted rows. The schema is exported
+  to `core/database/schemas` and committed; destructive migration is not enabled.
+- **Repository** (`core:data`): writes only to Room and marks the row for upload.
+  Deleting a row that never reached the server removes it; deleting a synced row leaves
+  a tombstone. Mappers are `internal` extension functions.
+- **Preferences**: `UserPreferences` (theme mode and dynamic color) in DataStore. A read
+  failure falls back to the defaults, and a corrupted file is reset, because these are
+  cosmetic preferences. `MainViewModel` exposes them and `MainActivity` applies them to the
+  theme, including the system bar icons.
+
+There is still no screen to change the theme, no use case, and no synchronization:
+`categories` is not used by any feature yet.
 
 ## Concurrency and errors
 
@@ -163,20 +199,28 @@ Version catalog in `gradle/libs.versions.toml`. Convention plugins in
 | Plugin | Purpose |
 |---|---|
 | `lifeos.android.application` | SDK levels (from the catalog), Java level, test runner; applies `lifeos.quality` |
+| `lifeos.android.library` | Same as above for Android library modules |
+| `lifeos.kotlin.library` | Pure Kotlin (JVM) modules, Java 11 target |
 | `lifeos.android.compose` | Compose compiler plugin, `buildFeatures.compose`, Compose BOM (application and library modules) |
+| `lifeos.android.hilt` | KSP, the Hilt plugin, `hilt-android` and the Hilt compiler |
+| `lifeos.android.room` | KSP, Room runtime and compiler, schema export to `schemas/` |
 | `lifeos.quality` | ktlint and detekt configuration |
 
-Library and pure-Kotlin convention plugins will be added together with the
-modules that need them.
-
-The project uses AGP 9.x, which bundles Kotlin support. From research (not yet
-exercised in this project): KSP must be 2.3.6 or newer for AGP 9 and `kapt` is
-not supported; Hilt supports AGP 9 from 2.59. Hilt, Room and KSP must be
-verified with a real build when they are introduced.
+The project uses AGP 9.x, which bundles Kotlin support, so `kapt` is not used and
+annotation processing goes through KSP. Hilt 2.60.1, KSP 2.3.13 and Room 2.8.5 were
+verified together with this setup (AGP 9.5.0, Kotlin 2.2.x): the app builds with the full
+Hilt graph and Room generates its code and schema. An open KSP bug affects Room entities
+annotated with `@Parcelize` under AGP 9; entities here are never `Parcelable`.
 
 ## Tooling
 
 - ktlint 1.8.0 through `ktlint-gradle` (formatting), rules in `.editorconfig`.
 - detekt 2.0.0-alpha.6 (static analysis), rules in `config/detekt/detekt.yml`.
   It is a pre-release, see [DECISIONS.md](DECISIONS.md).
-- Planned: GitHub Actions for CI, MockK, Turbine and Compose UI testing.
+- Tests: JUnit, MockK, Turbine and `kotlinx-coroutines-test` for JVM tests; Compose UI
+  tests and Room tests with an in-memory database run on a device or emulator
+  (`androidTest`). Repository tests use hand-written in-memory fakes rather than mocks
+  where behavior matters. Tests must not depend on the operating system: DataStore
+  replaces its file by renaming a temporary one, which fails on Windows JVMs, so the
+  preferences tests use an in-memory `DataStore`.
+- Planned: GitHub Actions for CI.

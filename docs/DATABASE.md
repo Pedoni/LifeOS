@@ -124,8 +124,33 @@ inside a folder named after their user ID.
   first and sign out locally afterwards.
 - Trigger `on_auth_user_email_changed`: keeps `profiles.email` aligned.
 
+## Local database (Room)
+
+`LifeOSDatabase` (version 1) has one table so far: `categories`, the reference
+implementation for the other synchronized tables. Its schema is exported to
+[`core/database/schemas`](../core/database/schemas) and committed.
+
+Columns of `CategoryEntity`: `id`, `userId`, `name`, `color`, `type`, `createdAt`,
+`updatedAt`, `deletedAt`, `syncStatus`, `remoteUpdatedAt`. Differences from the backend
+table:
+
+- Times are epoch milliseconds.
+- `syncStatus` (`SYNCED`, `PENDING_UPLOAD`, `PENDING_DELETE`, `SYNC_ERROR`) is local only.
+- `updatedAt` is the local modification time. `remoteUpdatedAt` is the `updated_at` last
+  returned by the server, stored as the **exact text** received so its microseconds are
+  not lost. It is sent back as `base_updated_at` on the next push and is null for a row
+  that never reached the server.
+- There is no local unique index on the name: the backend has a partial one (names are
+  unique per user and type among non-deleted rows), which Room cannot express. Conflicts
+  are reported by the server (see [SYNC.md](SYNC.md)).
+
+The other tables are added with the feature that needs them.
+
 ## Migrations
 
-Scripts are applied manually in numeric order. Further changes must be added as
-new numbered scripts, never by editing applied ones. Room migrations (local
-schema) will be tested from the first schema version.
+Backend scripts are applied manually in numeric order. Further changes must be added
+as new numbered scripts, never by editing applied ones.
+
+Local schema: every change needs a version bump, a Room migration and a test; the
+exported schemas are the input for those tests. No migration exists yet because there
+is only version 1.

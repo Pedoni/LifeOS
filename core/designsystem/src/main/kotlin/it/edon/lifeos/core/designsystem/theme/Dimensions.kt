@@ -19,7 +19,9 @@ data class LifeOSSpacing(
     val xxl: Dp = 32.dp,
     val xxxl: Dp = 48.dp,
     /** Minimum size of any tappable element. */
-    val minTouchTarget: Dp = 48.dp
+    val minTouchTarget: Dp = 48.dp,
+    /** Widest a form is allowed to grow, so it stays readable on tablets. */
+    val formMaxWidth: Dp = 480.dp
 )
 
 /**

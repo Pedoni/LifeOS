@@ -129,26 +129,34 @@ mode was fixed to executable, because it had been created on Windows without the
 Requiring a green CI before merging is a repository setting on GitHub, left to the
 project owner.
 
-## Proposed
-
 ### D-08 Scope of version 1.0.0
 
-Proposal: `1.0.0` contains foundation, core (authentication, profile,
-dashboard, tasks, projects), personal productivity (habits, goals, calendar,
-notifications, recurring tasks), backend and synchronization, statistics and
-production readiness. Specification phase 5 and the life modules come after.
-Alternative: ship statistics as `1.1.0` to reach the release earlier.
+`1.0.0` contains foundation, core (authentication, profile, dashboard, tasks,
+projects), personal productivity (habits, goals, calendar, notifications, recurring
+tasks), backend and synchronization, **statistics**, and production readiness.
+Specification phase 5 and the life modules come after, one minor version each.
 
 ### D-09 Authentication
 
-Proposal: use Supabase Auth from Phase 1, keeping data local in Room until the
-synchronization phase. Alternative: a local implementation behind a domain
-interface in Phase 1 and Supabase in Phase 3.
+Supabase Auth from the first day of Phase 1, with email and password first and Google
+Sign-In as a separate step. Until the synchronization phase the data stays local in Room:
+the account identifies the user, it does not yet move data between devices. Signing up or
+in for the first time needs a connection; afterwards the stored session lets the app work
+offline. All local rows carry the owner and every query filters by it, so several accounts
+can share a device.
 
-### D-11 Early closed test on Google Play
+### D-11 Google Play test track
 
-Proposal: publish an internal or closed test after Phase 1 or 2 to validate
-signing, privacy requirements and CI early.
+No early closed test on Google Play. Signing and store preparation stay in the production
+readiness phase. The decision may be revisited if release problems are expected.
+
+### D-19 Networking library
+
+Retrofit and OkHttp are not added for now. The Supabase Kotlin client already covers
+authentication, database and storage with its own networking; Retrofit will be introduced
+only if the app needs to call other REST APIs.
+
+## Proposed
 
 ### D-12 AI suggestions
 
@@ -160,8 +168,8 @@ the feature off, only aggregated data is sent, and per-user quotas apply.
 ## Open
 
 - Package layout inside the modules (base package is `it.edon.lifeos`).
-- Whether Retrofit is needed, given that the Supabase Kotlin client has its own
-  networking.
+- How to store the authentication session (plain preferences or encrypted with the Android
+  Keystore), to be decided in the authentication foundation step.
 - User-facing behavior on a sync conflict (re-apply or discard).
 - Whether `allowBackup` should stay enabled given the personal data stored.
 - Contract between life modules and the dashboard.

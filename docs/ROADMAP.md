@@ -42,7 +42,21 @@ product feature.
 ## Phase 1 - Core application (target `0.2.0`)
 
 Authentication, profile, tasks, projects, dashboard (last, because it
-aggregates the others). One branch per feature.
+aggregates the others). One branch per feature. Data stays local until Phase 3: the
+account identifies the user but nothing is synchronized yet.
+
+| Step | Branch | Scope | Status |
+|---|---|---|---|
+| 1.0 | `chore/environment-config` | Development and production configuration (Supabase URL and public key from `local.properties`, fallbacks for CI) | planned |
+| 1.1 | `feature/auth-foundation` | Supabase client, `AuthRepository`, persistent session, current user available to the app; no screens | planned |
+| 1.2 | `feature/authentication` | `feature/auth` module: sign up, sign in, password recovery, validation, navigation gate | planned |
+| 1.3 | `feature/google-sign-in` | Google Sign-In (needs configuration on Google Cloud) | planned |
+| 1.4 | `feature/profile` | Profile, avatar, theme preference screen, sign out, account deletion | planned |
+| 1.5 | `feature/task-management` | Tasks: domain, Room tables, use cases, create and edit, views, filters and sorting (likely split in two branches) | planned |
+| 1.6 | `feature/project-management` | Projects, progress computed from tasks, task and project association | planned |
+| 1.7 | `feature/dashboard` | Overview of what exists so far | planned |
+
+Out of Phase 1: recurring tasks and reminders (Phase 2), synchronization (Phase 3).
 
 ## Phase 2 - Personal productivity (target `0.3.0`)
 
@@ -63,11 +77,11 @@ and goal progress, Vico charts. Every metric has a documented calculation.
 
 Comprehensive testing, accessibility, performance profiling, security review,
 release configuration, app signing, privacy documentation and Play Store
-preparation. An early closed test on Google Play after Phase 1 or 2 is
-recommended, to validate signing, privacy and CI while the project is small.
+preparation. There is no early test track on Google Play: store preparation happens
+here, at the end (see [DECISIONS.md](DECISIONS.md), D-11).
 
-The scope of `1.0.0` (specification phases 0 to 4 plus production readiness) is
-awaiting confirmation; see [DECISIONS.md](DECISIONS.md).
+The scope of `1.0.0` is confirmed: specification phases 0 to 4 (including statistics)
+plus production readiness (D-08).
 
 ## After 1.0.0
 

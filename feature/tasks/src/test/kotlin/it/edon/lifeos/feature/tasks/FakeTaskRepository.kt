@@ -15,7 +15,9 @@ internal fun testTask(
     title: String = "Write report",
     status: TaskStatus = TaskStatus.TODO,
     completedAt: Instant? = null,
-    due: DueDate? = null
+    due: DueDate? = null,
+    priority: TaskPriority = TaskPriority.HIGH,
+    categoryId: String? = null
 ) = Task(
     id = id,
     userId = "u1",
@@ -23,10 +25,10 @@ internal fun testTask(
     description = "details",
     notes = null,
     status = status,
-    priority = TaskPriority.HIGH,
+    priority = priority,
     due = due,
     estimatedDurationMinutes = 30,
-    categoryId = null,
+    categoryId = categoryId,
     completedAt = completedAt,
     createdAt = Instant.parse("2026-01-01T00:00:00Z"),
     updatedAt = Instant.parse("2026-01-01T00:00:00Z")

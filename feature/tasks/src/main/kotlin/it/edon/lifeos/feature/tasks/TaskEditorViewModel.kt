@@ -5,12 +5,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import it.edon.lifeos.core.common.Outcome
+import it.edon.lifeos.core.designsystem.theme.CategoryColors
 import it.edon.lifeos.core.domain.model.AuthState
+import it.edon.lifeos.core.domain.model.Category
+import it.edon.lifeos.core.domain.model.CategoryType
 import it.edon.lifeos.core.domain.model.Task
 import it.edon.lifeos.core.domain.model.TaskPriority
 import it.edon.lifeos.core.domain.model.TaskStatus
 import it.edon.lifeos.core.domain.repository.AuthRepository
+import it.edon.lifeos.core.domain.repository.CategoryRepository
 import it.edon.lifeos.core.domain.repository.TaskRepository
+import it.edon.lifeos.core.domain.task.CategoryNameIssue
+import it.edon.lifeos.core.domain.task.CreateTaskCategoryUseCase
 import it.edon.lifeos.core.domain.task.DurationIssue
 import it.edon.lifeos.core.domain.task.SaveTaskUseCase
 import it.edon.lifeos.core.domain.task.TaskFailure
@@ -29,6 +35,14 @@ import kotlinx.coroutines.launch
 
 enum class DuePicker { DATE, TIME }
 
+/** The small form for a category created while editing a task. */
+data class NewCategoryDraft(
+    val name: String = "",
+    val colorHex: String = CategoryColors.first().hex,
+    val issue: CategoryNameIssue? = null,
+    val isSaving: Boolean = false
+)
+
 sealed interface TaskEditorUiState {
     /** Waiting for the task being edited. */
     data object Loading : TaskEditorUiState
@@ -46,6 +60,9 @@ sealed interface TaskEditorUiState {
         val dueDate: LocalDate? = null,
         val dueTime: LocalTime? = null,
         val duration: String = "",
+        val categoryId: String? = null,
+        val categories: List<Category> = emptyList(),
+        val newCategory: NewCategoryDraft? = null,
         val titleIssue: TitleIssue? = null,
         val durationIssue: DurationIssue? = null,
         val picker: DuePicker? = null,
@@ -62,6 +79,9 @@ sealed interface TaskEditorEvent {
 
     /** Changes the due date, its time, or the picker that is open. */
     sealed interface DueEvent : TaskEditorEvent
+
+    /** Chooses a category, or fills in the form that creates one. */
+    sealed interface CategoryEvent : TaskEditorEvent
 
     data class TitleChanged(val value: String) : FieldEvent
 
@@ -87,6 +107,18 @@ sealed interface TaskEditorEvent {
 
     data object ClearDue : DueEvent
 
+    data class CategorySelected(val categoryId: String?) : CategoryEvent
+
+    data object ShowNewCategory : CategoryEvent
+
+    data class NewCategoryNameChanged(val value: String) : CategoryEvent
+
+    data class NewCategoryColorSelected(val colorHex: String) : CategoryEvent
+
+    data object DismissNewCategory : CategoryEvent
+
+    data object ConfirmNewCategory : TaskEditorEvent
+
     data object Save : TaskEditorEvent
 
     data object RequestDelete : TaskEditorEvent
@@ -101,7 +133,9 @@ class TaskEditorViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val authRepository: AuthRepository,
     private val taskRepository: TaskRepository,
-    private val saveTask: SaveTaskUseCase
+    private val categoryRepository: CategoryRepository,
+    private val saveTask: SaveTaskUseCase,
+    private val createCategory: CreateTaskCategoryUseCase
 ) : ViewModel() {
     // Navigation stores each route argument under the name of its property.
     private val taskId: String? = savedStateHandle.get<String?>(TaskEditorRoute::taskId.name)
@@ -112,14 +146,20 @@ class TaskEditorViewModel @Inject constructor(
     )
     val uiState: StateFlow<TaskEditorUiState> = _uiState.asStateFlow()
 
+    // Kept apart from the form so a task that loads later still gets the categories.
+    private var taskCategories: List<Category> = emptyList()
+
     init {
         if (taskId != null) load(taskId)
+        observeCategories()
     }
 
     fun onEvent(event: TaskEditorEvent) {
         when (event) {
             is TaskEditorEvent.FieldEvent -> edit { withField(event) }
             is TaskEditorEvent.DueEvent -> edit { withDue(event) }
+            is TaskEditorEvent.CategoryEvent -> edit { withCategory(event) }
+            TaskEditorEvent.ConfirmNewCategory -> createNewCategory()
             TaskEditorEvent.Save -> save()
             TaskEditorEvent.RequestDelete -> edit { copy(isDeleteDialogVisible = true) }
             TaskEditorEvent.DismissDelete -> edit { copy(isDeleteDialogVisible = false) }
@@ -134,7 +174,37 @@ class TaskEditorViewModel @Inject constructor(
     private fun load(id: String) {
         viewModelScope.launch {
             val task = taskRepository.getTask(id)
-            _uiState.value = task?.toForm(zone) ?: TaskEditorUiState.NotFound
+            _uiState.value = task?.toForm(zone)?.copy(categories = taskCategories)
+                ?: TaskEditorUiState.NotFound
+        }
+    }
+
+    private fun observeCategories() {
+        viewModelScope.launch {
+            val userId = currentUserId() ?: return@launch
+            categoryRepository.observeCategories(userId).collect { all ->
+                taskCategories = all.filter { it.type == CategoryType.TASK }
+                edit { copy(categories = taskCategories) }
+            }
+        }
+    }
+
+    private fun createNewCategory() {
+        val form = _uiState.value as? TaskEditorUiState.Form ?: return
+        val draft = form.newCategory?.takeUnless { it.isSaving } ?: return
+        edit { copy(newCategory = draft.copy(isSaving = true, issue = null)) }
+        viewModelScope.launch {
+            val userId = currentUserId()
+            val outcome = userId?.let { createCategory(it, draft.name, draft.colorHex) }
+            when (outcome) {
+                is Outcome.Success ->
+                    edit { copy(categoryId = outcome.value.id, newCategory = null) }
+
+                is Outcome.Failure ->
+                    edit { copy(newCategory = draft.copy(issue = outcome.error)) }
+
+                null -> edit { copy(newCategory = draft) }
+            }
         }
     }
 
@@ -156,6 +226,7 @@ class TaskEditorViewModel @Inject constructor(
                 status = form.status,
                 priority = form.priority,
                 due = form.dueDate?.let { DueSelection(it, form.dueTime) }.toDueDate(zone),
+                categoryId = form.categoryId,
                 estimatedDurationMinutes = form.duration
             )
             when (val outcome = saveTask(userId, input)) {
@@ -203,7 +274,8 @@ private fun Task.toForm(zone: ZoneId): TaskEditorUiState.Form {
         priority = priority,
         dueDate = selection?.date,
         dueTime = selection?.time,
-        duration = estimatedDurationMinutes?.toString().orEmpty()
+        duration = estimatedDurationMinutes?.toString().orEmpty(),
+        categoryId = categoryId
     )
 }
 
@@ -224,3 +296,18 @@ private fun TaskEditorUiState.Form.withDue(event: TaskEditorEvent.DueEvent) = wh
     TaskEditorEvent.ClearTime -> copy(dueTime = null)
     TaskEditorEvent.ClearDue -> copy(dueDate = null, dueTime = null)
 }
+
+private fun TaskEditorUiState.Form.withCategory(event: TaskEditorEvent.CategoryEvent) =
+    when (event) {
+        is TaskEditorEvent.CategorySelected -> copy(categoryId = event.categoryId)
+
+        TaskEditorEvent.ShowNewCategory -> copy(newCategory = NewCategoryDraft())
+
+        is TaskEditorEvent.NewCategoryNameChanged ->
+            copy(newCategory = newCategory?.copy(name = event.value, issue = null))
+
+        is TaskEditorEvent.NewCategoryColorSelected ->
+            copy(newCategory = newCategory?.copy(colorHex = event.colorHex))
+
+        TaskEditorEvent.DismissNewCategory -> copy(newCategory = null)
+    }

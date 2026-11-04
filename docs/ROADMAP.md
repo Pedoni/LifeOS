@@ -21,8 +21,8 @@ the `core/*` modules, the design system, the navigation shell, the persistence a
 dependency injection foundation (Hilt, Room, DataStore) and the CI workflow
 (GitHub Actions), sign-up and sign-in with email and password behind a navigation
 gate, and the profile screen (display name, theme, sign-out, account deletion), reached
-from the More hub, and the first half of task management (list, create, edit, complete,
-delete). The other navigation destinations are still placeholders: no project, habit, goal
+from the More hub, and task management (list, create, edit, complete, delete; views, sorting, filters and
+categories). The other navigation destinations are still placeholders: no project, habit, goal
 or calendar feature exists yet. The Supabase project exists with its schema applied (including
 script 003). The app version is `0.1.0` (`versionCode` 1).
 
@@ -57,7 +57,7 @@ account identifies the user but nothing is synchronized yet.
 | 1.3 | `feature/google-sign-in` | Google Sign-In (needs configuration on Google Cloud) | deferred to before the release |
 | 1.4 | `feature/profile` | Profile screen: email, display name, theme preference, sign out, account deletion. The avatar is a later step (1.4b: Storage, image picker, image loading) | done |
 | 1.5a | `feature/task-management` | Tasks, first half: domain, Room table (database version 2, migration), use cases, `feature:tasks` with the list and the editor (title, description, notes, status, priority, due day or moment, estimated duration), complete and reopen, delete | done |
-| 1.5b | `feature/task-views` | Tasks, second half: filters, sorting, views (today, upcoming, overdue, completed, grouped by priority), categories on tasks | planned |
+| 1.5b | `feature/task-views` | Tasks, second half: views (all, today, upcoming, overdue, completed), sorting, filters by priority and category, grouping by priority, and categories on tasks (created from the task editor) | done |
 | 1.6 | `feature/project-management` | Projects, progress computed from tasks, task and project association | planned |
 | 1.7 | `feature/dashboard` | Overview of what exists so far | planned |
 

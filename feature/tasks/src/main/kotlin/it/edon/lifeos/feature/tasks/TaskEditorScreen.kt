@@ -134,6 +134,7 @@ private fun FormContent(
         ) {
             TextFields(form, onEvent)
             PrioritySection(form, onEvent)
+            CategorySection(form, onEvent)
             StatusSection(form, onEvent)
             DueSection(form, onEvent)
             Column(verticalArrangement = Arrangement.spacedBy(LifeOSTheme.spacing.sm)) {

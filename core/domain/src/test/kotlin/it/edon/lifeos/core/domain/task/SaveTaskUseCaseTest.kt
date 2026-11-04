@@ -25,7 +25,8 @@ class SaveTaskUseCaseTest {
         title: String = "Write report",
         duration: String = "",
         status: TaskStatus = TaskStatus.TODO,
-        due: DueDate? = null
+        due: DueDate? = null,
+        categoryId: String? = null
     ) = TaskInput(
         id = id,
         title = title,
@@ -34,6 +35,7 @@ class SaveTaskUseCaseTest {
         status = status,
         priority = TaskPriority.MEDIUM,
         due = due,
+        categoryId = categoryId,
         estimatedDurationMinutes = duration
     )
 
@@ -118,6 +120,17 @@ class SaveTaskUseCaseTest {
     }
 
     @Test
+    fun theCategoryComesFromTheInputAndCanBeRemoved() = runTest {
+        repository.save(stored())
+
+        val changed = useCase("user", input(id = "t1", categoryId = "other")) as Outcome.Success
+        assertEquals("other", changed.value.categoryId)
+
+        val removed = useCase("user", input(id = "t1", categoryId = null)) as Outcome.Success
+        assertNull(removed.value.categoryId)
+    }
+
+    @Test
     fun editingKeepsWhatThePersonCannotChange() = runTest {
         repository.save(stored())
 
@@ -128,7 +141,7 @@ class SaveTaskUseCaseTest {
 
         val task = (outcome as Outcome.Success).value
         assertEquals("t1", task.id)
-        assertEquals("cat", task.categoryId)
+        assertEquals("user", task.userId)
         assertEquals(Instant.parse("2026-01-01T00:00:00Z"), task.createdAt)
         assertEquals(now, task.updatedAt)
         assertEquals(DueDate.AllDay(LocalDate.parse("2026-03-12")), task.due)

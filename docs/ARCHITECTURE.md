@@ -239,7 +239,7 @@ handle the link, so the redirect lands in the browser.
 - **Sign-out works offline:** if the server cannot be told, the local session is still removed.
 - New design system pieces: top bar, confirmation dialog, radio and switch rows.
 
-## Tasks (step 1.5a)
+## Tasks (steps 1.5a and 1.5b)
 
 - **Domain** (`core:domain`): `Task` checks the same rules as the backend (title of 1 to 300
   characters, positive duration) and one more: it has a completion time exactly when it is
@@ -268,8 +268,35 @@ handle the link, so the redirect lands in the browser.
   no time zone. Dates use `java.time` through `atZone`, not `LocalDate.ofInstant`, which needs API 34
   (minSdk is 29) and which lint does not check in the pure Kotlin modules.
 
-Not done yet: filters, sorting and the grouped views (step 1.5b), categories on tasks, projects,
-tags, reminders, recurrence. Database errors on save are not turned into a screen state: they would
+### Views, sorting, filters and categories (step 1.5b)
+
+- **The query** (`core:domain`): `TaskListQuery` holds a `TaskView` (`ALL`, `TODAY`, `UPCOMING`,
+  `OVERDUE`, `COMPLETED`), a `TaskFilter` (priorities, one category), a `TaskSort` (field and
+  direction) and whether to group by priority. `apply(tasks, now, zone)` is a pure function that
+  returns groups, so it is tested with fixed clocks and several time zones. It works on the
+  tasks Room already emits; there are no per-view SQL queries.
+- **View rules:** `TODAY` is open tasks due today that are not late yet, `UPCOMING` is open tasks due
+  from tomorrow, `OVERDUE` is `Task.isOverdue`, `COMPLETED` is the completed status only, `ALL` is
+  everything. A moment already passed today is overdue, not today, so the views other than `ALL` never
+  overlap. Sorting puts finished tasks after open ones and undated tasks after dated ones in both
+  directions; a whole-day due date counts as the end of that day. Equal tasks are ordered by creation
+  time and id, so refreshes do not shuffle them.
+- **State:** the chosen query lives in `TasksViewModel` and is not saved: it is reset when the process
+  ends (decision D-25). A view or filter that matches nothing keeps the content state, with a message
+  and a reset button; the empty state is only for having no tasks at all.
+- **Screen:** view chips above the list and a "Filter and sort" bottom sheet (sort field and direction,
+  group by priority, priorities, category). The button says when something is on.
+- **Categories:** `CreateTaskCategoryUseCase` creates a category of type task, refusing blank or long
+  names and a name already used by the person for tasks, ignoring case (the backend has the same unique
+  rule among non-deleted rows). The task editor offers the categories as chips with a "None" choice and a
+  "New category" dialog (name and one of eight colors from `CategoryColors`). The new category is
+  selected at once. The color is only a visual aid: names are always written out. The list shows the
+  category of each task and can filter by it. There is no screen to rename or delete categories yet.
+- **Design system:** `LifeOSBottomSheet`, `LifeOSFormDialog`, `LifeOSColorSwatch`, `LifeOSColorDot`, the
+  `CategoryColors` palette, and a color marker option on `LifeOSChoiceChip`.
+
+Not done yet: managing categories (rename, delete), projects, tags, reminders, recurrence, search.
+Database errors on save are not turned into a screen state: they would
 surface as a crash, as for categories.
 
 ## Persistence conventions

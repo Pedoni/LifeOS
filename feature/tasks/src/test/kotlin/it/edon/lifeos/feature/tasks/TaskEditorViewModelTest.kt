@@ -5,10 +5,13 @@ import io.mockk.every
 import io.mockk.mockk
 import it.edon.lifeos.core.domain.model.AuthState
 import it.edon.lifeos.core.domain.model.AuthUser
+import it.edon.lifeos.core.domain.model.CategoryType
 import it.edon.lifeos.core.domain.model.DueDate
 import it.edon.lifeos.core.domain.model.TaskPriority
 import it.edon.lifeos.core.domain.model.TaskStatus
 import it.edon.lifeos.core.domain.repository.AuthRepository
+import it.edon.lifeos.core.domain.task.CategoryNameIssue
+import it.edon.lifeos.core.domain.task.CreateTaskCategoryUseCase
 import it.edon.lifeos.core.domain.task.DurationIssue
 import it.edon.lifeos.core.domain.task.SaveTaskUseCase
 import it.edon.lifeos.core.domain.task.TitleIssue
@@ -39,12 +42,15 @@ class TaskEditorViewModelTest {
             authState
     }
     private val repository = FakeTaskRepository()
+    private val categories = FakeCategoryRepository()
 
     private fun viewModel(taskId: String? = null) = TaskEditorViewModel(
         SavedStateHandle(mapOfNotNull("taskId" to taskId)),
         authRepository,
         repository,
-        SaveTaskUseCase(repository, clock)
+        categories,
+        SaveTaskUseCase(repository, clock),
+        CreateTaskCategoryUseCase(categories, clock)
     )
 
     private fun mapOfNotNull(vararg pairs: Pair<String, String?>) =
@@ -195,5 +201,81 @@ class TaskEditorViewModelTest {
 
         assertFalse(viewModel.form().isDeleteDialogVisible)
         assertEquals(1, repository.tasks.value.size)
+    }
+
+    @Test
+    fun theTaskCategoriesOfThePersonAreOffered() = runTest {
+        categories.save(testCategory("work", "Work"))
+        categories.save(testCategory("goal", "Reading", CategoryType.GOAL))
+
+        assertEquals(listOf("Work"), viewModel().form().categories.map { it.name })
+    }
+
+    @Test
+    fun categoriesAlsoReachAFormThatLoadsLater() = runTest {
+        categories.save(testCategory("work", "Work"))
+        repository.tasks.value = mapOf("t1" to testTask("t1", categoryId = "work"))
+
+        val form = viewModel("t1").form()
+
+        assertEquals("work", form.categoryId)
+        assertEquals(listOf("Work"), form.categories.map { it.name })
+    }
+
+    @Test
+    fun theChosenCategoryIsSavedWithTheTask() = runTest {
+        categories.save(testCategory("work", "Work"))
+        val viewModel = viewModel()
+        viewModel.onEvent(TaskEditorEvent.TitleChanged("Write report"))
+        viewModel.onEvent(TaskEditorEvent.CategorySelected("work"))
+
+        viewModel.onEvent(TaskEditorEvent.Save)
+
+        assertEquals("work", repository.tasks.value.values.single().categoryId)
+    }
+
+    @Test
+    fun creatingACategoryFromTheEditorSelectsIt() = runTest {
+        val viewModel = viewModel()
+        viewModel.onEvent(TaskEditorEvent.ShowNewCategory)
+        viewModel.onEvent(TaskEditorEvent.NewCategoryNameChanged("  Home "))
+        viewModel.onEvent(TaskEditorEvent.NewCategoryColorSelected("#00796B"))
+
+        viewModel.onEvent(TaskEditorEvent.ConfirmNewCategory)
+
+        val created = categories.categories.value.values.single()
+        assertEquals("Home", created.name)
+        assertEquals("#00796B", created.color)
+        val form = viewModel.form()
+        assertEquals(created.id, form.categoryId)
+        assertNull(form.newCategory)
+        assertEquals(listOf("Home"), form.categories.map { it.name })
+    }
+
+    @Test
+    fun aRepeatedCategoryNameIsExplainedAndTheDialogStaysOpen() = runTest {
+        categories.save(testCategory("work", "Work"))
+        val viewModel = viewModel()
+        viewModel.onEvent(TaskEditorEvent.ShowNewCategory)
+        viewModel.onEvent(TaskEditorEvent.NewCategoryNameChanged("work"))
+
+        viewModel.onEvent(TaskEditorEvent.ConfirmNewCategory)
+
+        val draft = viewModel.form().newCategory
+        assertEquals(CategoryNameIssue.ALREADY_EXISTS, draft?.issue)
+        assertFalse(draft?.isSaving ?: true)
+        assertEquals(1, categories.categories.value.size)
+    }
+
+    @Test
+    fun dismissingTheNewCategoryDialogCreatesNothing() = runTest {
+        val viewModel = viewModel()
+        viewModel.onEvent(TaskEditorEvent.ShowNewCategory)
+        viewModel.onEvent(TaskEditorEvent.NewCategoryNameChanged("Home"))
+
+        viewModel.onEvent(TaskEditorEvent.DismissNewCategory)
+
+        assertNull(viewModel.form().newCategory)
+        assertTrue(categories.categories.value.isEmpty())
     }
 }

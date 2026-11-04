@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 /**
  * Creates a task or applies an edit to an existing one, after checking the rules. What the person
- * cannot change here (owner, creation time, category) is kept from the stored task.
+ * cannot change here (owner, creation time) is kept from the stored task.
  */
 class SaveTaskUseCase @Inject constructor(
     private val repository: TaskRepository,
@@ -56,7 +56,7 @@ class SaveTaskUseCase @Inject constructor(
             priority = input.priority,
             due = input.due,
             estimatedDurationMinutes = minutes,
-            categoryId = existing?.categoryId,
+            categoryId = input.categoryId,
             completedAt = completionTime(input.status, existing, now),
             createdAt = existing?.createdAt ?: now,
             updatedAt = now

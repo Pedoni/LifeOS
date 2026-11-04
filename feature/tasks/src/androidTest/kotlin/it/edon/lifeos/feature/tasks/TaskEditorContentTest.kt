@@ -2,13 +2,19 @@ package it.edon.lifeos.feature.tasks
 
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
+import it.edon.lifeos.core.designsystem.theme.CategoryColors
 import it.edon.lifeos.core.designsystem.theme.LifeOSTheme
+import it.edon.lifeos.core.domain.model.Category
+import it.edon.lifeos.core.domain.model.CategoryType
 import it.edon.lifeos.core.domain.model.TaskPriority
+import it.edon.lifeos.core.domain.task.CategoryNameIssue
 import it.edon.lifeos.core.domain.task.TitleIssue
+import java.time.Instant
 import java.time.LocalDate
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -119,5 +125,51 @@ class TaskEditorContentTest {
         show(TaskEditorUiState.Loading)
 
         composeRule.onNodeWithText("Loading the task").assertExists()
+    }
+
+    @Test
+    fun categoriesAreOfferedWithANoneChoice() {
+        val work =
+            Category("c1", "u1", "Work", "#3F51B5", CategoryType.TASK, Instant.EPOCH, Instant.EPOCH)
+        show(TaskEditorUiState.Form(isNew = true, categories = listOf(work)))
+
+        composeRule.onNodeWithText("None").performScrollTo().assertExists()
+        composeRule.onNodeWithText("Work").performScrollTo().performClick()
+
+        assertEquals(listOf<TaskEditorEvent>(TaskEditorEvent.CategorySelected("c1")), events)
+    }
+
+    @Test
+    fun aNewCategoryCanBeStartedFromTheEditor() {
+        show(TaskEditorUiState.Form(isNew = true))
+
+        composeRule.onNodeWithText("New category").performScrollTo().performClick()
+
+        assertEquals(listOf<TaskEditorEvent>(TaskEditorEvent.ShowNewCategory), events)
+    }
+
+    @Test
+    fun theNewCategoryDialogAsksForANameAndAColor() {
+        show(
+            TaskEditorUiState.Form(
+                isNew = true,
+                newCategory = NewCategoryDraft(
+                    name = "Home",
+                    issue = CategoryNameIssue.ALREADY_EXISTS
+                )
+            )
+        )
+
+        composeRule.onNodeWithText("You already have a category with this name.").assertExists()
+        composeRule.onNodeWithContentDescription("Color 2 of 8").performClick()
+        composeRule.onNodeWithText("Create").performClick()
+
+        assertEquals(
+            listOf(
+                TaskEditorEvent.NewCategoryColorSelected(CategoryColors[1].hex),
+                TaskEditorEvent.ConfirmNewCategory
+            ),
+            events
+        )
     }
 }

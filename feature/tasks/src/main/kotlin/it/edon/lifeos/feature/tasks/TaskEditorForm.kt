@@ -183,6 +183,7 @@ internal fun DueSection(form: TaskEditorUiState.Form, onEvent: (TaskEditorEvent)
 
 @Composable
 internal fun Dialogs(form: TaskEditorUiState.Form, onEvent: (TaskEditorEvent) -> Unit) {
+    form.newCategory?.let { NewCategoryDialog(draft = it, onEvent = onEvent) }
     val ok = stringResource(R.string.task_editor_picker_ok)
     val cancel = stringResource(R.string.task_editor_cancel)
     when (form.picker) {
@@ -220,7 +221,7 @@ internal fun Dialogs(form: TaskEditorUiState.Form, onEvent: (TaskEditorEvent) ->
 }
 
 @Composable
-private fun Section(title: String, content: @Composable () -> Unit) {
+internal fun Section(title: String, content: @Composable () -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(LifeOSTheme.spacing.sm)) {
         Text(
             text = title,

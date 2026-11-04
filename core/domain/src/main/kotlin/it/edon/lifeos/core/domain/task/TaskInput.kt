@@ -13,6 +13,7 @@ data class TaskInput(
     val status: TaskStatus,
     val priority: TaskPriority,
     val due: DueDate?,
+    val categoryId: String?,
     /** Kept as typed, so a wrong value can be reported instead of silently dropped. */
     val estimatedDurationMinutes: String
 )

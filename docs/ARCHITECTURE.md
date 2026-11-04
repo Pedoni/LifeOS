@@ -1,8 +1,9 @@
 # Architecture
 
-> **Status: proposal.** The project is still a single-module Empty Activity
-> template. This document describes the target architecture. Items marked
-> *Open* need the project owner's approval (see [DECISIONS.md](DECISIONS.md)).
+> **Status: partly implemented.** The foundation, authentication and profile are
+> built; the rest describes the target architecture, and each section says what
+> exists. Items marked *Open* need the project owner's approval (see
+> [DECISIONS.md](DECISIONS.md)).
 
 ## Principles
 
@@ -40,9 +41,10 @@ push when connectivity allows. See [SYNC.md](SYNC.md).
 
 The nine `core/*` modules exist and `:app` depends on all of them. `common`,
 `network` and `ui` are still empty. `feature/*` modules are created one at a time:
-`feature:auth` and `feature:profile` exist, the others do not yet. Each one is created when its feature is built. `core:common` and `core:domain` are pure
-Kotlin (JVM) modules; the others are Android libraries (`designsystem`, `ui` and
-`navigation` with Compose). Target layout:
+`feature:auth` and `feature:profile` exist, the others do not yet. Each one is created
+when its feature is built. `core:common` and `core:domain` are pure Kotlin (JVM)
+modules; the others are Android libraries (`designsystem`, `ui` and `navigation` with
+Compose). Target layout:
 
 ```
 app/                 composition root, navigation host, Hilt application
@@ -168,8 +170,8 @@ The Supabase URL and public key reach the app as `SupabaseConfig` (`core:network
 class that rejects blank values and hides the key in its string form. `app` builds it
 from `BuildConfig` and provides it through Hilt (`AppModule`); the network layer never
 reads build properties itself. How the values are resolved, for debug and release, is
-described in [DECISIONS.md](DECISIONS.md), D-20. Nothing uses `SupabaseConfig` yet: the
-Supabase client arrives with the authentication foundation step.
+described in [DECISIONS.md](DECISIONS.md), D-20. `NetworkModule` uses it to create the
+Supabase client.
 
 ## Authentication
 

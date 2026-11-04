@@ -197,8 +197,8 @@ both without needing two backends:
   unexpected is not swallowed, except at the network boundary where it becomes `Unknown`
   (the user is told something went wrong and can retry); cancellation is never swallowed.
 - **Key type:** the client takes the Supabase public key through a single parameter. Whether
-  the `anon` or the `publishable` format is accepted by this library version has not been
-  verified yet; the first real sign-up will show it.
+  the `publishable` format (`sb_publishable_...`) is accepted by this library version: a real
+  sign-in against the project succeeded with it.
 
 ### D-22 Sign-up and sign-in
 

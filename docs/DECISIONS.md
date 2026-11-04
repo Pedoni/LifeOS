@@ -245,7 +245,7 @@ both without needing two backends:
 - **Due dates:** a task is due on a day or at an exact moment. The backend keeps `due_date` as
   `timestamptz` and gets a `due_all_day` column (`003_task_due_all_day.sql`, additive); for an
   all-day task `due_date` is midnight UTC of the day, so it does not move with the time zone. The
-  script has to be applied in the Supabase SQL Editor before the synchronization phase.
+  script was applied in the Supabase SQL Editor by the project owner.
 - **Columns left out of Room for now:** project, goal, tags, reminder and recurrence belong to
   later steps and phases and are added with a migration when they are needed. Only `categoryId` is
   stored already, with no screen to set it.

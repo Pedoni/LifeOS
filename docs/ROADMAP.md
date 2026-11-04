@@ -23,8 +23,8 @@ dependency injection foundation (Hilt, Room, DataStore) and the CI workflow
 gate, and the profile screen (display name, theme, sign-out, account deletion), reached
 from the More hub, and the first half of task management (list, create, edit, complete,
 delete). The other navigation destinations are still placeholders: no project, habit, goal
-or calendar feature exists yet. The Supabase project exists with its schema applied (plus
-script 003, still to be applied). The app version is `0.1.0` (`versionCode` 1).
+or calendar feature exists yet. The Supabase project exists with its schema applied (including
+script 003). The app version is `0.1.0` (`versionCode` 1).
 
 ## Phase 0 - Foundation (target `0.1.0`)
 

@@ -4,13 +4,13 @@ The backend schema is in [`supabase/sql/001_schema.sql`](../supabase/sql/001_sch
 the RPC functions in [`002_functions.sql`](../supabase/sql/002_functions.sql) and the
 all-day due date column of tasks in [`003_task_due_all_day.sql`](../supabase/sql/003_task_due_all_day.sql).
 
-**Status.** Scripts 001 and 002 were applied to the project's single Supabase project (there is
+**Status.** Scripts 001, 002 and 003 were applied to the project's single Supabase project (there is
 no separate development one, see [DECISIONS.md](DECISIONS.md), D-20) and `push_rows` was
 verified manually in the SQL Editor (insert, idempotent retry, update, conflict, per-row
 error). `delete_my_account` and the email trigger are created but not yet exercised.
-**Script 003 is written but not applied yet**: the app does not talk to the `tasks` table
-before the synchronization phase, so it has to be run in the SQL Editor before then. The
-local (Room) schema is described below.
+Script 003 (the `due_all_day` column) was applied
+in the SQL Editor; the column was not checked in the Table Editor and the app does not talk to
+the `tasks` table before the synchronization phase. The local (Room) schema is described below.
 
 ## Principles
 

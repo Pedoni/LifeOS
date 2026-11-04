@@ -48,6 +48,15 @@ private class FakeAuthRemoteDataSource : AuthRemoteDataSource {
     override suspend fun requestPasswordReset(email: String) {
         failure?.let { throw it }
     }
+
+    override suspend fun updateDisplayName(displayName: String?) {
+        lastDisplayName = displayName
+        failure?.let { throw it }
+    }
+
+    override suspend fun deleteAccount() {
+        failure?.let { throw it }
+    }
 }
 
 class AuthRepositoryImplTest {
@@ -113,6 +122,18 @@ class AuthRepositoryImplTest {
 
         assertEquals(Outcome.Failure(AuthError.Network), repository.signOut())
         assertEquals(Outcome.Failure(AuthError.Network), repository.requestPasswordReset("a@b.c"))
+    }
+
+    @Test
+    fun updatingTheNameAndDeletingTheAccountReportTheirFailures() = runTest {
+        assertEquals(Outcome.Success(Unit), repository.updateDisplayName("Ada"))
+        assertEquals("Ada", remote.lastDisplayName)
+        assertEquals(Outcome.Success(Unit), repository.deleteAccount())
+
+        remote.failure = RemoteAuthException.Network()
+
+        assertEquals(Outcome.Failure(AuthError.Network), repository.updateDisplayName(null))
+        assertEquals(Outcome.Failure(AuthError.Network), repository.deleteAccount())
     }
 
     @Test

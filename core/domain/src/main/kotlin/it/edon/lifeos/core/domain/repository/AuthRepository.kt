@@ -26,4 +26,13 @@ interface AuthRepository {
     suspend fun signOut(): Outcome<Unit, AuthError>
 
     suspend fun requestPasswordReset(email: String): Outcome<Unit, AuthError>
+
+    /** A null [displayName] removes it. The new value shows up in [authState]. */
+    suspend fun updateDisplayName(displayName: String?): Outcome<Unit, AuthError>
+
+    /**
+     * Deletes the account on the server with all its data. The person stays signed in on this
+     * device until [signOut] is called, so the caller can clean up local data first.
+     */
+    suspend fun deleteAccount(): Outcome<Unit, AuthError>
 }

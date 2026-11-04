@@ -23,4 +23,7 @@ interface CategoryDao {
 
     @Query("DELETE FROM categories WHERE id = :id")
     suspend fun deleteById(id: String)
+
+    @Query("DELETE FROM categories WHERE userId = :userId")
+    suspend fun deleteAllForUser(userId: String)
 }

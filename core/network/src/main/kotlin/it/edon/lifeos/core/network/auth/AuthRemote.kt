@@ -53,4 +53,10 @@ interface AuthRemoteDataSource {
     suspend fun signOut()
 
     suspend fun requestPasswordReset(email: String)
+
+    /** A null [displayName] removes it. */
+    suspend fun updateDisplayName(displayName: String?)
+
+    /** Deletes the signed-in account and its data on the server. The session is not cleared. */
+    suspend fun deleteAccount()
 }

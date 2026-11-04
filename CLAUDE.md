@@ -99,7 +99,7 @@ honestly what was and was not tested.
 
 - Never commit secrets. Configuration lives in `local.properties` (ignored) and
   CI secrets.
-- Only the Supabase public (anon) key may be in the client; never the
+- Only the Supabase public key (`anon` or `publishable`) may be in the client; never the
   `service_role` key. Access is protected by Row Level Security.
 - Do not claim local database encryption unless it is implemented.
 

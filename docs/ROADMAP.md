@@ -19,7 +19,8 @@ Gradle configuration.
 The repository contains the build foundation (convention plugins, ktlint, detekt),
 the `core/*` modules, the design system, the navigation shell, the persistence and
 dependency injection foundation (Hilt, Room, DataStore) and the CI workflow
-(GitHub Actions). Every navigation destination is a placeholder: no product feature
+(GitHub Actions), and sign-up and sign-in with email and password behind a navigation
+gate. Every navigation destination is still a placeholder: no product feature
 exists yet. The Supabase project exists with its schema applied. The app
 version is `0.1.0` (`versionCode` 1).
 
@@ -47,15 +48,23 @@ account identifies the user but nothing is synchronized yet.
 
 | Step | Branch | Scope | Status |
 |---|---|---|---|
-| 1.0 | `chore/environment-config` | Development and production configuration (Supabase URL and public key from `local.properties`, fallbacks for CI) | in progress |
-| 1.1 | `feature/auth-foundation` | Supabase client, `AuthRepository`, persistent session, current user available to the app; no screens | in progress |
-| 1.2 | `feature/authentication` | `feature/auth` module: sign up and sign in with email and password, validation, navigation gate, temporary sign-out button | in progress |
-| 1.2b | `feature/auth-email-links` | Email confirmation and password recovery: links that reopen the app, forgot-password screen, new-password screen (needs a custom SMTP to reach arbitrary addresses) | planned |
-| 1.3 | `feature/google-sign-in` | Google Sign-In (needs configuration on Google Cloud) | planned |
+| 1.0 | `chore/environment-config` | Development and production configuration (Supabase URL and public key from `local.properties`, fallbacks for CI) | done |
+| 1.1 | `feature/auth-foundation` | Supabase client, `AuthRepository`, persistent session, current user available to the app; no screens | done |
+| 1.2 | `feature/authentication` | `feature/auth` module: sign up and sign in with email and password, validation, navigation gate, temporary sign-out button | done |
+| 1.2b | `feature/auth-email-links` | Email confirmation and password recovery: links that reopen the app, forgot-password screen, new-password screen (needs a custom SMTP to reach arbitrary addresses) | deferred to before the release |
+| 1.3 | `feature/google-sign-in` | Google Sign-In (needs configuration on Google Cloud) | deferred to before the release |
 | 1.4 | `feature/profile` | Profile, avatar, theme preference screen, sign out, account deletion | planned |
 | 1.5 | `feature/task-management` | Tasks: domain, Room tables, use cases, create and edit, views, filters and sorting (likely split in two branches) | planned |
 | 1.6 | `feature/project-management` | Projects, progress computed from tasks, task and project association | planned |
 | 1.7 | `feature/dashboard` | Overview of what exists so far | planned |
+
+Steps 1.2b and 1.3 are not needed while the app has a single user, and no later step
+depends on them. They must be done before the first release: without 1.2b nobody can
+recover a forgotten password, and the custom SMTP is needed to reach arbitrary addresses.
+
+Verified so far against the real Supabase project: sign-in of a dashboard-created user with
+a `publishable` key, and the navigation gate. Sign-up with email confirmation, session
+persistence across restarts and offline start have not been tried on a device.
 
 Out of Phase 1: recurring tasks and reminders (Phase 2), synchronization (Phase 3).
 

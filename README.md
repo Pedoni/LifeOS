@@ -86,12 +86,12 @@ dashboard and run, in order, in the SQL Editor:
 1. [`supabase/sql/001_schema.sql`](supabase/sql/001_schema.sql)
 2. [`supabase/sql/002_functions.sql`](supabase/sql/002_functions.sql)
 
-The app reads the project URL and the public (anon) key at build time from
+The app reads the project URL and the public (anon or publishable) key at build time from
 `local.properties`, which is ignored by Git:
 
 ```
 supabase.url=https://<project>.supabase.co
-supabase.anonKey=<public anon key>
+supabase.anonKey=<public anon or publishable key>
 
 # Optional: used by debug builds only, to point at another project
 supabase.dev.url=

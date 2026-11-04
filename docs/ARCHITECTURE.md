@@ -39,8 +39,8 @@ push when connectivity allows. See [SYNC.md](SYNC.md).
 ## Module structure
 
 The nine `core/*` modules exist and `:app` depends on all of them. `common`,
-`network` and `ui` are still empty. `feature/*` modules do not exist yet: each one
-is created when its feature is built. `core:common` and `core:domain` are pure
+`network` and `ui` are still empty. `feature/*` modules are created one at a time:
+`feature:auth` exists, the others do not yet. Each one is created when its feature is built. `core:common` and `core:domain` are pure
 Kotlin (JVM) modules; the others are Android libraries (`designsystem`, `ui` and
 `navigation` with Compose). Target layout:
 
@@ -191,11 +191,34 @@ Session handling is described in [DECISIONS.md](DECISIONS.md), D-21: an encrypte
 `noBackupFilesDir` (`EncryptedSessionManager` with a Keystore-backed `SessionCipher`), a user
 who stays signed in offline, and a session that cannot be read is discarded.
 
-Not done yet: no screen uses it, sign-out of local data, Google sign-in (step 1.3), account
-deletion (step 1.4), deep links for email confirmation and password reset (step 1.2). The
-dependency graph of the auth classes is only exercised for real once a screen injects the
-repository; the build compiles and the unit tests pass, but no run against a real Supabase
-project has been made.
+### Sign-up and sign-in (step 1.2)
+
+- **Rules and use cases** (`core:domain`): `AuthValidation` holds the input rules (a
+  well-formed email, a password of at least 8 characters with no composition rules and never
+  trimmed, an optional display name of up to 100 characters). `SignInUseCase` and
+  `SignUpUseCase` check them before anything is sent and return `AuthFailure`: either
+  `InvalidInput` (which fields, and why) or `Rejected(AuthError)`. Signing in only checks that
+  the password is not empty, because a password set earlier may predate the current rules. The
+  minimum length must be set to the same value in the Supabase dashboard.
+- **Display name:** optional at sign-up and stored in the user's metadata (`full_name`).
+- **`feature:auth`:** the first feature module, built with the `lifeos.android.feature`
+  convention plugin. Sign-in and sign-up each have a `ViewModel` with an immutable UI state and
+  an event type, and a screen split into a thin stateful part and a stateless `Content` that is
+  previewed and tested alone. States covered: idle, submitting (the button shows progress and
+  the form is disabled), field problems, an inline error banner announced by screen readers,
+  and, after a sign-up that needs it, a "check your email" screen. `AuthNavHost` holds the two
+  destinations.
+- **The gate** (`app`): `SessionViewModel` exposes `AuthState`; `LifeOSRoot` cross-fades between
+  a loading state, the auth flow and the main content (`MainContent`, the bottom bar and the
+  tabs). When sign-in or sign-up succeeds the state changes and the screen is replaced; the
+  screens never navigate away themselves. With a stored session the app opens signed in even
+  without a connection.
+- **Temporary:** the "More" placeholder offers "Sign out" until the profile screen exists.
+
+Not done yet: email confirmation and password recovery links (step 1.2b), Google sign-in
+(step 1.3), account deletion and a real sign-out experience (step 1.4). The email
+confirmation works on the server (the link confirms the account) but the app does not yet
+handle the link, so the redirect lands in the browser.
 
 ## Persistence conventions
 
@@ -241,6 +264,7 @@ Version catalog in `gradle/libs.versions.toml`. Convention plugins in
 | `lifeos.android.hilt` | KSP, the Hilt plugin, `hilt-android` and the Hilt compiler |
 | `lifeos.android.room` | KSP, Room runtime and compiler, schema export to `schemas/` |
 | `lifeos.android.environment` | Supabase URL and public key as `BuildConfig` fields (debug and release), from `local.properties` or environment variables; fails a release build without real values |
+| `lifeos.android.feature` | A feature module: library, Compose, Hilt, serialization routes, navigation and lifecycle dependencies, test libraries; depends only on `core` modules |
 | `lifeos.quality` | ktlint and detekt configuration |
 
 The project uses AGP 9.x, which bundles Kotlin support, so `kapt` is not used and

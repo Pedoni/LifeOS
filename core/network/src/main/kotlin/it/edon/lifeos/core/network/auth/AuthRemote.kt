@@ -46,7 +46,7 @@ sealed class RemoteAuthException(message: String, cause: Throwable?) : Exception
 interface AuthRemoteDataSource {
     val sessionState: Flow<RemoteSessionState>
 
-    suspend fun signUp(email: String, password: String): RemoteSignUp
+    suspend fun signUp(email: String, password: String, displayName: String?): RemoteSignUp
 
     suspend fun signIn(email: String, password: String): RemoteUser
 

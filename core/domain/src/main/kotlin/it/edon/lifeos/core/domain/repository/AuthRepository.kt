@@ -14,7 +14,12 @@ interface AuthRepository {
      */
     val authState: Flow<AuthState>
 
-    suspend fun signUp(email: String, password: String): Outcome<SignUpResult, AuthError>
+    /** [displayName] is optional and is stored with the account. */
+    suspend fun signUp(
+        email: String,
+        password: String,
+        displayName: String?
+    ): Outcome<SignUpResult, AuthError>
 
     suspend fun signIn(email: String, password: String): Outcome<AuthUser, AuthError>
 

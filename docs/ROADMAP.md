@@ -49,7 +49,8 @@ account identifies the user but nothing is synchronized yet.
 |---|---|---|---|
 | 1.0 | `chore/environment-config` | Development and production configuration (Supabase URL and public key from `local.properties`, fallbacks for CI) | in progress |
 | 1.1 | `feature/auth-foundation` | Supabase client, `AuthRepository`, persistent session, current user available to the app; no screens | in progress |
-| 1.2 | `feature/authentication` | `feature/auth` module: sign up, sign in, password recovery, validation, navigation gate | planned |
+| 1.2 | `feature/authentication` | `feature/auth` module: sign up and sign in with email and password, validation, navigation gate, temporary sign-out button | in progress |
+| 1.2b | `feature/auth-email-links` | Email confirmation and password recovery: links that reopen the app, forgot-password screen, new-password screen (needs a custom SMTP to reach arbitrary addresses) | planned |
 | 1.3 | `feature/google-sign-in` | Google Sign-In (needs configuration on Google Cloud) | planned |
 | 1.4 | `feature/profile` | Profile, avatar, theme preference screen, sign out, account deletion | planned |
 | 1.5 | `feature/task-management` | Tasks: domain, Room tables, use cases, create and edit, views, filters and sorting (likely split in two branches) | planned |

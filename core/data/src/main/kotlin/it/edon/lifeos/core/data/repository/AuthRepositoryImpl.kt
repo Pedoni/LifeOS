@@ -18,8 +18,13 @@ internal class AuthRepositoryImpl @Inject constructor(private val remote: AuthRe
 
     override val authState: Flow<AuthState> = remote.sessionState.map { it.toDomain() }
 
-    override suspend fun signUp(email: String, password: String): Outcome<SignUpResult, AuthError> =
-        outcomeOf { SignUpResult(remote.signUp(email, password).requiresEmailConfirmation) }
+    override suspend fun signUp(
+        email: String,
+        password: String,
+        displayName: String?
+    ): Outcome<SignUpResult, AuthError> = outcomeOf {
+        SignUpResult(remote.signUp(email, password, displayName).requiresEmailConfirmation)
+    }
 
     override suspend fun signIn(email: String, password: String): Outcome<AuthUser, AuthError> =
         outcomeOf { remote.signIn(email, password).toDomain() }

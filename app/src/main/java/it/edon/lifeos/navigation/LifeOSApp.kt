@@ -1,49 +1,51 @@
 package it.edon.lifeos.navigation
 
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
-import it.edon.lifeos.core.designsystem.component.LifeOSNavigationBar
-import it.edon.lifeos.core.designsystem.component.LifeOSNavigationBarItem
-import it.edon.lifeos.core.navigation.TopLevelDestination
-import it.edon.lifeos.core.navigation.isInHierarchyOf
-import it.edon.lifeos.core.navigation.navigateToTopLevel
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import it.edon.lifeos.core.designsystem.component.LifeOSLoadingState
+import it.edon.lifeos.core.designsystem.theme.LifeOSTheme
+import it.edon.lifeos.core.domain.model.AuthState
+import it.edon.lifeos.feature.auth.AuthNavHost
 
-/** Root of the UI: bottom bar plus the navigation host. */
+private enum class RootContent { Loading, Auth, Main }
+
+/** Root of the UI: it shows the sign-in flow or the app depending on who is signed in. */
 @Composable
-fun LifeOSApp() {
-    val navController = rememberNavController()
-    val currentDestination = navController.currentBackStackEntryAsState().value?.destination
-    // The bar belongs to the top-level destinations only, not to their detail screens.
-    val showBottomBar = TopLevelDestination.entries.any { currentDestination.isInHierarchyOf(it) }
+fun LifeOSApp(sessionViewModel: SessionViewModel = hiltViewModel()) {
+    val authState by sessionViewModel.authState.collectAsStateWithLifecycle()
+    LifeOSRoot(authState = authState, onSignOut = sessionViewModel::signOut)
+}
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        bottomBar = {
-            if (showBottomBar) {
-                LifeOSNavigationBar {
-                    TopLevelDestination.entries.forEach { destination ->
-                        LifeOSNavigationBarItem(
-                            selected = currentDestination.isInHierarchyOf(destination),
-                            onClick = { navController.navigateToTopLevel(destination) },
-                            icon = destination.icon,
-                            selectedIcon = destination.selectedIcon,
-                            label = stringResource(destination.labelRes)
-                        )
-                    }
-                }
+@Composable
+internal fun LifeOSRoot(authState: AuthState, onSignOut: () -> Unit) {
+    // The content depends on the kind of state, not on who is signed in, so changing user data
+    // does not replay the transition.
+    val content = when (authState) {
+        AuthState.Loading -> RootContent.Loading
+        AuthState.SignedOut -> RootContent.Auth
+        is AuthState.SignedIn -> RootContent.Main
+    }
+    Surface(modifier = Modifier.fillMaxSize()) {
+        Crossfade(
+            targetState = content,
+            animationSpec = tween(
+                durationMillis = LifeOSTheme.motion.durationMedium,
+                easing = LifeOSTheme.motion.easing
+            ),
+            label = "root"
+        ) { target ->
+            when (target) {
+                RootContent.Loading -> LifeOSLoadingState()
+                RootContent.Auth -> AuthNavHost()
+                RootContent.Main -> MainContent(onSignOut = onSignOut)
             }
         }
-    ) { innerPadding ->
-        LifeOSNavHost(
-            navController = navController,
-            modifier = Modifier.padding(innerPadding)
-        )
     }
 }

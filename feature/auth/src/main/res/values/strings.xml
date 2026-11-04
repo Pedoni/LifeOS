@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Sign in -->
+    <string name="auth_sign_in_title">Welcome back</string>
+    <string name="auth_sign_in_subtitle">Sign in to continue.</string>
+    <string name="auth_sign_in_action">Sign in</string>
+    <string name="auth_go_to_sign_up">Create an account</string>
+
+    <!-- Sign up -->
+    <string name="auth_sign_up_title">Create your account</string>
+    <string name="auth_sign_up_subtitle">Your tasks, projects and habits in one place.</string>
+    <string name="auth_sign_up_action">Create account</string>
+    <string name="auth_go_to_sign_in">I already have an account</string>
+
+    <!-- Email confirmation -->
+    <string name="auth_check_email_title">Check your email</string>
+    <string name="auth_check_email_message">We sent a link to %1$s. Open it to confirm your account, then sign in.</string>
+    <string name="auth_back_to_sign_in">Back to sign in</string>
+
+    <!-- Fields -->
+    <string name="auth_field_email">Email</string>
+    <string name="auth_field_password">Password</string>
+    <string name="auth_field_display_name">Name (optional)</string>
+    <string name="auth_show_password">Show password</string>
+    <string name="auth_hide_password">Hide password</string>
+
+    <!-- Field problems -->
+    <string name="auth_issue_email_blank">Enter your email address.</string>
+    <string name="auth_issue_email_invalid">Enter a valid email address.</string>
+    <string name="auth_issue_password_blank">Enter your password.</string>
+    <string name="auth_issue_password_too_short">Use at least %1$d characters.</string>
+    <string name="auth_issue_display_name_too_long">Use at most %1$d characters.</string>
+
+    <!-- Errors -->
+    <string name="auth_error_invalid_credentials">The email or the password is not correct.</string>
+    <string name="auth_error_email_registered">An account with this email already exists. Try signing in.</string>
+    <string name="auth_error_weak_password">This password is too weak. Choose a longer one.</string>
+    <string name="auth_error_email_not_confirmed">Your email is not confirmed yet. Open the link we sent you, then sign in.</string>
+    <string name="auth_error_invalid_input">Check the email address and try again.</string>
+    <string name="auth_error_rate_limited">Too many attempts. Wait a little and try again.</string>
+    <string name="auth_error_network">We cannot reach the server. Check your connection and try again.</string>
+    <string name="auth_error_unknown">Something went wrong. Please try again.</string>
+</resources>

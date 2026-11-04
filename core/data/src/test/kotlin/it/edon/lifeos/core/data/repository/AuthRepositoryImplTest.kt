@@ -22,10 +22,16 @@ private class FakeAuthRemoteDataSource : AuthRemoteDataSource {
     val state = MutableStateFlow<RemoteSessionState>(RemoteSessionState.Initializing)
     var failure: Throwable? = null
     var requiresConfirmation = false
+    var lastDisplayName: String? = null
 
     override val sessionState: Flow<RemoteSessionState> = state
 
-    override suspend fun signUp(email: String, password: String): RemoteSignUp {
+    override suspend fun signUp(
+        email: String,
+        password: String,
+        displayName: String?
+    ): RemoteSignUp {
+        lastDisplayName = displayName
         failure?.let { throw it }
         return RemoteSignUp(requiresConfirmation)
     }
@@ -81,7 +87,14 @@ class AuthRepositoryImplTest {
     fun signUpReportsWhetherTheEmailMustBeConfirmed() = runTest {
         remote.requiresConfirmation = true
 
-        assertEquals(Outcome.Success(SignUpResult(true)), repository.signUp("a@b.c", "pw"))
+        assertEquals(Outcome.Success(SignUpResult(true)), repository.signUp("a@b.c", "pw", null))
+    }
+
+    @Test
+    fun signUpForwardsTheDisplayName() = runTest {
+        repository.signUp("a@b.c", "pw", "Ada")
+
+        assertEquals("Ada", remote.lastDisplayName)
     }
 
     @Test
@@ -90,7 +103,7 @@ class AuthRepositoryImplTest {
 
         assertEquals(
             Outcome.Failure(AuthError.EmailAlreadyRegistered),
-            repository.signUp("a@b.c", "pw")
+            repository.signUp("a@b.c", "pw", null)
         )
     }
 

@@ -1,12 +1,9 @@
 package it.edon.lifeos.navigation
 
 import app.cash.turbine.test
-import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import it.edon.lifeos.MainDispatcherRule
-import it.edon.lifeos.core.common.Outcome
 import it.edon.lifeos.core.domain.model.AuthState
 import it.edon.lifeos.core.domain.model.AuthUser
 import it.edon.lifeos.core.domain.repository.AuthRepository
@@ -44,15 +41,5 @@ class SessionViewModelTest {
             states.value = AuthState.SignedIn(user)
             assertEquals(AuthState.SignedIn(user), awaitItem())
         }
-    }
-
-    @Test
-    fun signingOutAsksTheRepository() {
-        every { repository.authState } returns MutableSharedFlow()
-        coEvery { repository.signOut() } returns Outcome.Success(Unit)
-
-        SessionViewModel(repository).signOut()
-
-        coVerify(exactly = 1) { repository.signOut() }
     }
 }

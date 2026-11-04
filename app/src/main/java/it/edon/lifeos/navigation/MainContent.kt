@@ -17,10 +17,10 @@ import it.edon.lifeos.core.navigation.navigateToTopLevel
 
 /**
  * What a signed-in person sees: the bottom bar plus the navigation host. It knows nothing about
- * authentication except the way out, so it can be shown and tested on its own.
+ * authentication, so it can be shown and tested on its own.
  */
 @Composable
-fun MainContent(onSignOut: () -> Unit, modifier: Modifier = Modifier) {
+fun MainContent(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
     val currentDestination = navController.currentBackStackEntryAsState().value?.destination
     // The bar belongs to the top-level destinations only, not to their detail screens.
@@ -44,10 +44,6 @@ fun MainContent(onSignOut: () -> Unit, modifier: Modifier = Modifier) {
             }
         }
     ) { innerPadding ->
-        LifeOSNavHost(
-            navController = navController,
-            onSignOut = onSignOut,
-            modifier = Modifier.padding(innerPadding)
-        )
+        LifeOSNavHost(navController = navController, modifier = Modifier.padding(innerPadding))
     }
 }

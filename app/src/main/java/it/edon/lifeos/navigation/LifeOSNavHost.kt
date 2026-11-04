@@ -14,18 +14,15 @@ import it.edon.lifeos.core.navigation.MoreRoute
 import it.edon.lifeos.core.navigation.TasksRoute
 import it.edon.lifeos.core.navigation.TopLevelDestination
 import it.edon.lifeos.core.navigation.deepLink
+import it.edon.lifeos.feature.profile.ProfileRoute
+import it.edon.lifeos.feature.profile.profileDestination
 
 /**
- * Navigation graph of the signed-in app. Every destination is still a placeholder: feature
- * modules will contribute their own graphs here as they are built. [onSignOut] is offered by the
- * "More" placeholder until the profile screen takes over that job.
+ * Navigation graph of the signed-in app. Destinations without a feature yet are placeholders:
+ * feature modules contribute their own destinations here as they are built.
  */
 @Composable
-fun LifeOSNavHost(
-    navController: NavHostController,
-    onSignOut: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+fun LifeOSNavHost(navController: NavHostController, modifier: Modifier = Modifier) {
     NavHost(
         navController = navController,
         startDestination = HomeRoute,
@@ -35,17 +32,21 @@ fun LifeOSNavHost(
         placeholderDestination<TasksRoute>(TopLevelDestination.Tasks)
         placeholderDestination<CalendarRoute>(TopLevelDestination.Calendar)
         placeholderDestination<HabitsRoute>(TopLevelDestination.Habits)
-        placeholderDestination<MoreRoute>(TopLevelDestination.More, onSignOut)
+        composable<MoreRoute>(
+            deepLinks = listOf(navDeepLink<MoreRoute>(basePath = TopLevelDestination.More.deepLink))
+        ) {
+            MoreScreen(onOpenProfile = { navController.navigate(ProfileRoute) })
+        }
+        profileDestination(onBack = { navController.popBackStack() })
     }
 }
 
 private inline fun <reified T : Any> NavGraphBuilder.placeholderDestination(
-    destination: TopLevelDestination,
-    noinline onSignOut: (() -> Unit)? = null
+    destination: TopLevelDestination
 ) {
     composable<T>(
         deepLinks = listOf(navDeepLink<T>(basePath = destination.deepLink))
     ) {
-        PlaceholderScreen(destination = destination, onSignOut = onSignOut)
+        PlaceholderScreen(destination = destination)
     }
 }

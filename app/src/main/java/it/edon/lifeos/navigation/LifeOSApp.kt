@@ -20,11 +20,11 @@ private enum class RootContent { Loading, Auth, Main }
 @Composable
 fun LifeOSApp(sessionViewModel: SessionViewModel = hiltViewModel()) {
     val authState by sessionViewModel.authState.collectAsStateWithLifecycle()
-    LifeOSRoot(authState = authState, onSignOut = sessionViewModel::signOut)
+    LifeOSRoot(authState = authState)
 }
 
 @Composable
-internal fun LifeOSRoot(authState: AuthState, onSignOut: () -> Unit) {
+internal fun LifeOSRoot(authState: AuthState) {
     // The content depends on the kind of state, not on who is signed in, so changing user data
     // does not replay the transition.
     val content = when (authState) {
@@ -44,7 +44,7 @@ internal fun LifeOSRoot(authState: AuthState, onSignOut: () -> Unit) {
             when (target) {
                 RootContent.Loading -> LifeOSLoadingState()
                 RootContent.Auth -> AuthNavHost()
-                RootContent.Main -> MainContent(onSignOut = onSignOut)
+                RootContent.Main -> MainContent()
             }
         }
     }

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- List -->
+    <string name="tasks_title">Tasks</string>
+    <string name="tasks_add">New task</string>
+    <string name="tasks_loading">Loading your tasks</string>
+    <string name="tasks_empty_title">No tasks yet</string>
+    <string name="tasks_empty_message">Add the first thing you want to get done.</string>
+    <string name="tasks_error_title">Your tasks could not be loaded</string>
+    <string name="tasks_error_message">Something went wrong while reading your tasks. Please try again.</string>
+    <string name="tasks_retry">Try again</string>
+    <string name="tasks_mark_done">Mark %1$s as done</string>
+    <string name="tasks_mark_not_done">Mark %1$s as not done</string>
+    <string name="tasks_due">Due %1$s</string>
+    <string name="tasks_overdue">Overdue</string>
+    <string name="tasks_duration_minutes">%1$d min</string>
+
+    <!-- Status and priority -->
+    <string name="tasks_status_todo">To do</string>
+    <string name="tasks_status_in_progress">In progress</string>
+    <string name="tasks_status_completed">Completed</string>
+    <string name="tasks_status_cancelled">Cancelled</string>
+    <string name="tasks_priority_low">Low</string>
+    <string name="tasks_priority_medium">Medium</string>
+    <string name="tasks_priority_high">High</string>
+    <string name="tasks_priority_urgent">Urgent</string>
+
+    <!-- Editor -->
+    <string name="task_editor_title_new">New task</string>
+    <string name="task_editor_title_edit">Edit task</string>
+    <string name="task_editor_back">Back</string>
+    <string name="task_editor_loading">Loading the task</string>
+    <string name="task_editor_not_found_title">This task no longer exists</string>
+    <string name="task_editor_not_found_message">It may have been deleted. Go back to your list.</string>
+    <string name="task_editor_back_to_list">Back to tasks</string>
+    <string name="task_editor_field_title">Title</string>
+    <string name="task_editor_field_description">Description</string>
+    <string name="task_editor_field_notes">Notes</string>
+    <string name="task_editor_field_duration">Estimated duration (minutes)</string>
+    <string name="task_editor_section_priority">Priority</string>
+    <string name="task_editor_section_status">Status</string>
+    <string name="task_editor_section_due">Due date</string>
+    <string name="task_editor_due_none">Set a due date</string>
+    <string name="task_editor_due_remove">Remove</string>
+    <string name="task_editor_due_time">Set a time</string>
+    <string name="task_editor_due_time_description">Without a time the task is due any time that day.</string>
+    <string name="task_editor_save">Save</string>
+    <string name="task_editor_delete">Delete task</string>
+    <string name="task_editor_delete_title">Delete this task?</string>
+    <string name="task_editor_delete_message">The task will be removed from your list.</string>
+    <string name="task_editor_delete_confirm">Delete</string>
+    <string name="task_editor_cancel">Cancel</string>
+    <string name="task_editor_picker_ok">OK</string>
+    <string name="task_editor_issue_title_blank">Give the task a title.</string>
+    <string name="task_editor_issue_title_too_long">Use at most %1$d characters.</string>
+    <string name="task_editor_issue_duration_not_a_number">Enter a whole number of minutes.</string>
+    <string name="task_editor_issue_duration_not_positive">Use a number greater than zero.</string>
+</resources>

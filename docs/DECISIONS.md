@@ -237,6 +237,27 @@ both without needing two backends:
 - **Dependency:** `postgrest-kt` 3.6.0 (same version as the auth module), used to call the
   server function; the synchronization phase needs it anyway.
 
+### D-24 Tasks, first half
+
+- **Split:** step 1.5 is done in two branches. 1.5a is the model, the table and the basic screens
+  (list, create, edit, complete, delete); 1.5b adds filters, sorting, the grouped views and
+  categories on tasks.
+- **Due dates:** a task is due on a day or at an exact moment. The backend keeps `due_date` as
+  `timestamptz` and gets a `due_all_day` column (`003_task_due_all_day.sql`, additive); for an
+  all-day task `due_date` is midnight UTC of the day, so it does not move with the time zone. The
+  script was applied in the Supabase SQL Editor by the project owner.
+- **Columns left out of Room for now:** project, goal, tags, reminder and recurrence belong to
+  later steps and phases and are added with a migration when they are needed. Only `categoryId` is
+  stored already, with no screen to set it.
+- **Local database:** version 2 with a real migration and a test. The test builds a version 1
+  database from the exported schema instead of using the `room-testing` helper, to avoid a new
+  dependency; the helper is a possible replacement.
+- **Status in the editor:** all four statuses can be chosen there; the list only completes and
+  reopens.
+- **Test helper:** `MainDispatcherRule` now exists in four modules (app, auth, profile, tasks). The
+  earlier comment said it would move to a shared test module at the third copy; that move is not
+  done and is waiting for the project owner's decision.
+
 ## Proposed
 
 ### D-12 AI suggestions

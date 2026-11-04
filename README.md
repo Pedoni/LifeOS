@@ -11,9 +11,10 @@ offline-first architecture and a Supabase backend.
 > a modular Clean Architecture project, a design system, bottom-bar navigation,
 > dependency injection (Hilt), local persistence (Room and DataStore), the
 > backend schema on Supabase and a CI pipeline. On top of that, sign-up,
-> sign-in and a profile screen exist; **no task, project or other product
-> feature is implemented yet** and the remaining screens are placeholders.
-> Next in the core application are tasks, projects and the dashboard. See
+> sign-in, a profile screen and the basics of task management (create, edit,
+> complete, delete) exist; **no project or other product feature is
+> implemented yet** and the remaining screens are placeholders. Next in the core
+> application are task filters and views, projects and the dashboard. See
 > [docs/ROADMAP.md](docs/ROADMAP.md) for the real state of each phase.
 
 ## Goals
@@ -86,6 +87,7 @@ dashboard and run, in order, in the SQL Editor:
 
 1. [`supabase/sql/001_schema.sql`](supabase/sql/001_schema.sql)
 2. [`supabase/sql/002_functions.sql`](supabase/sql/002_functions.sql)
+3. [`supabase/sql/003_task_due_all_day.sql`](supabase/sql/003_task_due_all_day.sql)
 
 The app reads the project URL and the public (anon or publishable) key at build time from
 `local.properties`, which is ignored by Git:

@@ -36,6 +36,7 @@ dependencies {
     implementation(projects.core.navigation)
     implementation(projects.feature.auth)
     implementation(projects.feature.profile)
+    implementation(projects.feature.tasks)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.ui)

@@ -153,11 +153,12 @@ table:
 
 `TaskEntity` has the same bookkeeping columns (owner, timestamps, `deletedAt`, `syncStatus`,
 `remoteUpdatedAt`) and, besides the basic fields, `status`, `priority`, `dueDate`,
-`dueAllDay`, `estimatedDurationMinutes` and `categoryId`. `categoryId` is stored but no screen
-sets it yet. The `tasks` columns for project, goal, tags, reminder and recurrence are not in
+`dueAllDay`, `estimatedDurationMinutes` and `categoryId`. `categoryId` is set from the task
+editor, where a category can also be created (see [ARCHITECTURE.md](ARCHITECTURE.md)). The `tasks` columns for project, goal, tags, reminder and recurrence are not in
 Room yet: they arrive with the features that use them, each with its own migration. The sync
-client will have to send complete rows, so it will need those columns first. Open tasks are
-returned first, by due date with the undated ones last, then the finished ones.
+client will have to send complete rows, so it will need those columns first. The DAO returns open
+tasks first, by due date with the undated ones last, then the finished ones; the list screen
+re-sorts them in the domain according to the view, filters and sort order the person chose.
 
 The other tables are added with the feature that needs them.
 

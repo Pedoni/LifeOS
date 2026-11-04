@@ -258,6 +258,28 @@ both without needing two backends:
   earlier comment said it would move to a shared test module at the third copy; that move is not
   done and is waiting for the project owner's decision.
 
+### D-25 Task views, sorting, filters and categories
+
+- **One branch** (`feature/task-views`) for views, sorting, filters and categories, instead of the
+  two planned (1.5b and 1.5c).
+- **Computed in the domain**, not in SQL: the meaning of today and late depends on the time zone and
+  on whether a due date is a day or a moment, which is already in `Task.isOverdue`. Room keeps
+  emitting the tasks of the person and `TaskListQuery.apply` selects, sorts and groups them. If the
+  number of tasks ever makes this slow, paging is a separate decision.
+- **Views:** all, today (open, due today, not late), upcoming (open, from tomorrow), overdue,
+  completed (completed status only; cancelled tasks appear in "All"). Today does not include the
+  overdue ones, which have their own view.
+- **Sorting:** by due date, priority, creation time or title, ascending or descending, where ascending
+  means the natural order of the field (soonest, lowest priority, oldest, A to Z). Filters: any
+  number of priorities and one category. Grouping: by priority, urgent first.
+- **Not persisted:** the chosen view, filters and sort order are kept in memory only. They are not
+  stored in DataStore; that can be added if wanted.
+- **Categories from the task editor:** a person creates a category while editing a task (name and a
+  color from a fixed palette) instead of in a separate management screen. Renaming and deleting
+  categories are left for later. Duplicate names are refused locally because the backend would refuse
+  them at synchronization time.
+- **Project grouping** from the specification waits for the projects step.
+
 ## Proposed
 
 ### D-12 AI suggestions

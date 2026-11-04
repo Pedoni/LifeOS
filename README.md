@@ -11,10 +11,10 @@ offline-first architecture and a Supabase backend.
 > a modular Clean Architecture project, a design system, bottom-bar navigation,
 > dependency injection (Hilt), local persistence (Room and DataStore), the
 > backend schema on Supabase and a CI pipeline. On top of that, sign-up,
-> sign-in, a profile screen and the basics of task management (create, edit,
-> complete, delete) exist; **no project or other product feature is
-> implemented yet** and the remaining screens are placeholders. Next in the core
-> application are task filters and views, projects and the dashboard. See
+> sign-in, a profile screen and task management (create, edit, complete,
+> delete, views, sorting, filters, categories) exist; **no project or other
+> product feature is implemented yet** and the remaining screens are
+> placeholders. Next in the core application are projects and the dashboard. See
 > [docs/ROADMAP.md](docs/ROADMAP.md) for the real state of each phase.
 
 ## Goals

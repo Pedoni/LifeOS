@@ -49,3 +49,37 @@ fun LifeOSConfirmDialog(
         }
     )
 }
+
+/**
+ * Dialog with a small form in it. Both buttons are disabled while [isBusy]; [confirmEnabled]
+ * lets the caller hold the confirm button back until the form can be submitted.
+ */
+@Composable
+fun LifeOSFormDialog(
+    title: String,
+    confirmLabel: String,
+    dismissLabel: String,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
+    isBusy: Boolean = false,
+    confirmEnabled: Boolean = true,
+    content: @Composable () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = { if (!isBusy) onDismiss() },
+        modifier = modifier,
+        title = { Text(text = title) },
+        text = content,
+        confirmButton = {
+            TextButton(onClick = onConfirm, enabled = confirmEnabled && !isBusy) {
+                Text(text = confirmLabel)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss, enabled = !isBusy) {
+                Text(text = dismissLabel)
+            }
+        }
+    )
+}

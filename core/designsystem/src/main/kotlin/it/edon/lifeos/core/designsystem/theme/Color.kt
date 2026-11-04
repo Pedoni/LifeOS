@@ -117,3 +117,27 @@ internal val DarkExtendedColors = LifeOSExtendedColors(
 )
 
 internal val LocalExtendedColors = staticCompositionLocalOf { LightExtendedColors }
+
+/** A color a person can give to a category: [hex] is what is stored, [color] what is drawn. */
+@Immutable
+data class CategoryColor(val hex: String, val color: Color)
+
+/**
+ * Colors offered for categories. A category is always identified by its name too, so the color
+ * is a visual aid and never the only signal.
+ */
+val CategoryColors: List<CategoryColor> = listOf(
+    CategoryColor("#3F51B5", Color(0xFF3F51B5)),
+    CategoryColor("#00796B", Color(0xFF00796B)),
+    CategoryColor("#0277BD", Color(0xFF0277BD)),
+    CategoryColor("#2E7D32", Color(0xFF2E7D32)),
+    CategoryColor("#B26A00", Color(0xFFB26A00)),
+    CategoryColor("#BA1A1A", Color(0xFFBA1A1A)),
+    CategoryColor("#8E24AA", Color(0xFF8E24AA)),
+    CategoryColor("#5B6B7F", Color(0xFF5B6B7F))
+)
+
+/** The drawn color of a stored [hex] value, or null when it is not one the app understands. */
+fun categoryColorOf(hex: String?): Color? = CategoryColors.firstOrNull {
+    it.hex.equals(hex, ignoreCase = true)
+}?.color

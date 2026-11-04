@@ -22,6 +22,12 @@ sealed interface DueDate {
     data class AllDay(val date: LocalDate) : DueDate
 
     data class At(val instant: Instant) : DueDate
+
+    /** The calendar day this falls on for a person in [zone]. */
+    fun day(zone: ZoneId): LocalDate = when (this) {
+        is AllDay -> date
+        is At -> instant.atZone(zone).toLocalDate()
+    }
 }
 
 /**

@@ -41,7 +41,7 @@ push when connectivity allows. See [SYNC.md](SYNC.md).
 
 The nine `core/*` modules exist and `:app` depends on all of them. `common`,
 `network` and `ui` are still empty. `feature/*` modules are created one at a time:
-`feature:auth` and `feature:profile` exist, the others do not yet. Each one is created
+`feature:auth`, `feature:profile` and `feature:tasks` exist, the others do not yet. Each one is created
 when its feature is built. `core:common` and `core:domain` are pure Kotlin (JVM)
 modules; the others are Android libraries (`designsystem`, `ui` and `navigation` with
 Compose). Target layout:
@@ -238,6 +238,39 @@ handle the link, so the redirect lands in the browser.
   avatar yet, so no files need deleting first.
 - **Sign-out works offline:** if the server cannot be told, the local session is still removed.
 - New design system pieces: top bar, confirmation dialog, radio and switch rows.
+
+## Tasks (step 1.5a)
+
+- **Domain** (`core:domain`): `Task` checks the same rules as the backend (title of 1 to 300
+  characters, positive duration) and one more: it has a completion time exactly when it is
+  completed. `DueDate` is either `AllDay(day)` or `At(instant)`; `Task.isOverdue` is the single
+  place that decides what overdue means (open tasks only; a day is overdue once it is over in
+  the person's time zone). `TaskRepository` returns `Flow`s.
+- **Use cases:** `SaveTaskUseCase` validates the form input (it reports every problem at once) and
+  creates or edits, keeping what the person cannot change (owner, creation time, category and an
+  earlier completion time); `SetTaskCompletedUseCase` completes or reopens. Listing and deleting go
+  through the repository, because a use case there would add nothing.
+- **Data:** `TaskEntity` and `TaskDao` in `core:database` (database version 2, see
+  [DATABASE.md](DATABASE.md)), `TaskRepositoryImpl` in `core:data` with the same local-first
+  behavior as categories. An all-day due date is stored as midnight UTC. `UserDataRepository` now
+  clears the tasks of the owner too.
+- **`feature:tasks`:** `TasksScreen` (the Tasks tab: list with loading, empty, error with retry
+  and content states, a checkbox to complete, overdue marked in words as well as color, a button
+  to add) and `TaskEditorScreen` (a form with validation messages, priority and status chips, a
+  date picker and an optional time picker, delete with confirmation). The tab itself and the
+  editor route are wired in `app`'s navigation graph: the editor is a destination without bottom
+  bar. The editor knows its task from the navigation argument and closes itself once it has
+  saved or deleted.
+- **Design system:** `LifeOSChoiceChip`, `LifeOSDatePickerDialog`, `LifeOSTimePickerDialog` and
+  `LifeOSAddButton`. Material hides the label of an extended floating button from screen readers,
+  so the add button repeats it as its description.
+- **Time zones:** dates are shown and picked in the device's current time zone; an all-day date has
+  no time zone. Dates use `java.time` through `atZone`, not `LocalDate.ofInstant`, which needs API 34
+  (minSdk is 29) and which lint does not check in the pure Kotlin modules.
+
+Not done yet: filters, sorting and the grouped views (step 1.5b), categories on tasks, projects,
+tags, reminders, recurrence. Database errors on save are not turned into a screen state: they would
+surface as a crash, as for categories.
 
 ## Persistence conventions
 

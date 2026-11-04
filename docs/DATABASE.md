@@ -1,12 +1,15 @@
 # Database
 
 The backend schema is in [`supabase/sql/001_schema.sql`](../supabase/sql/001_schema.sql)
-and the RPC functions in [`002_functions.sql`](../supabase/sql/002_functions.sql).
+the RPC functions in [`002_functions.sql`](../supabase/sql/002_functions.sql) and the
+all-day due date column of tasks in [`003_task_due_all_day.sql`](../supabase/sql/003_task_due_all_day.sql).
 
-**Status.** Both scripts were applied to the project's single Supabase project (there is
+**Status.** Scripts 001 and 002 were applied to the project's single Supabase project (there is
 no separate development one, see [DECISIONS.md](DECISIONS.md), D-20) and `push_rows` was
 verified manually in the SQL Editor (insert, idempotent retry, update, conflict, per-row
-error). `delete_my_account` and the email trigger are created but not yet exercised. The
+error). `delete_my_account` and the email trigger are created but not yet exercised.
+**Script 003 is written but not applied yet**: the app does not talk to the `tasks` table
+before the synchronization phase, so it has to be run in the SQL Editor before then. The
 local (Room) schema is described below.
 
 ## Principles
@@ -71,7 +74,7 @@ All tables below also have `created_at`, `updated_at` and (except `profiles`)
 | `projects` | `name`, `description`, `status`, `priority`, `color`, `start_date`, `deadline`, `completed_at` |
 | `goals` | `title`, `description`, `category_id`, `goal_type`, `target_value`, `current_value`, `progress`, `status`, `start_date`, `target_date` |
 | `goal_projects` | `goal_id`, `project_id` |
-| `tasks` | `project_id`, `goal_id`, `category_id`, `title`, `description`, `notes`, `status`, `priority`, `due_date`, `reminder_date`, `estimated_duration_minutes`, `completed_at`, `recurrence_*` |
+| `tasks` | `project_id`, `goal_id`, `category_id`, `title`, `description`, `notes`, `status`, `priority`, `due_date`, `due_all_day`, `reminder_date`, `estimated_duration_minutes`, `completed_at`, `recurrence_*` |
 | `task_tags` | `task_id`, `tag_id` |
 | `habits` | `name`, `description`, `frequency`, `scheduled_days`, `start_date`, `end_date`, `is_active` |
 | `habit_completions` | `habit_id`, `completion_date`, `status`, `note`; unique per habit and day |
@@ -102,8 +105,12 @@ for the N:M relation between goals and projects.
 The specification does not define these, they were chosen during design and
 can still be changed before the Room schema is written: the goal status values,
 the habit frequency and event type values, the recurrence columns on tasks, the
-stored `goals.progress` column (it can also be derived for numeric goals) and
-`due_date` as `timestamptz` (all-day tasks may need an extra flag).
+stored `goals.progress` column (it can also be derived for numeric goals).
+
+Settled: a task is due either on a day or at an exact moment. `due_date` stays a
+`timestamptz` and `due_all_day` says which one it is; for an all-day task `due_date` is
+midnight UTC of that day, so the day does not move when the device changes time zone
+(decision D-24).
 
 ## Security
 
@@ -126,8 +133,8 @@ inside a folder named after their user ID.
 
 ## Local database (Room)
 
-`LifeOSDatabase` (version 1) has one table so far: `categories`, the reference
-implementation for the other synchronized tables. Its schema is exported to
+`LifeOSDatabase` (version 2) has two tables so far: `categories`, the reference
+implementation for the other synchronized tables, and `tasks`. Its schema is exported to
 [`core/database/schemas`](../core/database/schemas) and committed.
 
 Columns of `CategoryEntity`: `id`, `userId`, `name`, `color`, `type`, `createdAt`,
@@ -144,6 +151,14 @@ table:
   unique per user and type among non-deleted rows), which Room cannot express. Conflicts
   are reported by the server (see [SYNC.md](SYNC.md)).
 
+`TaskEntity` has the same bookkeeping columns (owner, timestamps, `deletedAt`, `syncStatus`,
+`remoteUpdatedAt`) and, besides the basic fields, `status`, `priority`, `dueDate`,
+`dueAllDay`, `estimatedDurationMinutes` and `categoryId`. `categoryId` is stored but no screen
+sets it yet. The `tasks` columns for project, goal, tags, reminder and recurrence are not in
+Room yet: they arrive with the features that use them, each with its own migration. The sync
+client will have to send complete rows, so it will need those columns first. Open tasks are
+returned first, by due date with the undated ones last, then the finished ones.
+
 The other tables are added with the feature that needs them.
 
 ## Migrations
@@ -152,5 +167,10 @@ Backend scripts are applied manually in numeric order. Further changes must be a
 as new numbered scripts, never by editing applied ones.
 
 Local schema: every change needs a version bump, a Room migration and a test; the
-exported schemas are the input for those tests. No migration exists yet because there
-is only version 1.
+exported schemas are the input for those tests.
+
+- `MIGRATION_1_2` (`core/database/Migrations.kt`) adds the `tasks` table. Its test builds a
+  version 1 database from the exported `1.json`, opens it with the current code and checks
+  that the categories survive; Room refuses to open a database whose tables differ from the
+  expected schema. It runs on a device (`androidTest`) and uses no extra dependency; the
+  official `room-testing` helper could replace it if it is ever added.

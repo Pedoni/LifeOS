@@ -53,7 +53,7 @@ account identifies the user but nothing is synchronized yet.
 | 1.2 | `feature/authentication` | `feature/auth` module: sign up and sign in with email and password, validation, navigation gate, temporary sign-out button | done |
 | 1.2b | `feature/auth-email-links` | Email confirmation and password recovery: links that reopen the app, forgot-password screen, new-password screen (needs a custom SMTP to reach arbitrary addresses) | deferred to before the release |
 | 1.3 | `feature/google-sign-in` | Google Sign-In (needs configuration on Google Cloud) | deferred to before the release |
-| 1.4 | `feature/profile` | Profile, avatar, theme preference screen, sign out, account deletion | planned |
+| 1.4 | `feature/profile` | Profile screen: email, display name, theme preference, sign out, account deletion. The avatar is a later step (1.4b: Storage, image picker, image loading) | in progress |
 | 1.5 | `feature/task-management` | Tasks: domain, Room tables, use cases, create and edit, views, filters and sorting (likely split in two branches) | planned |
 | 1.6 | `feature/project-management` | Projects, progress computed from tasks, task and project association | planned |
 | 1.7 | `feature/dashboard` | Overview of what exists so far | planned |

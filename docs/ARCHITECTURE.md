@@ -40,7 +40,7 @@ push when connectivity allows. See [SYNC.md](SYNC.md).
 
 The nine `core/*` modules exist and `:app` depends on all of them. `common`,
 `network` and `ui` are still empty. `feature/*` modules are created one at a time:
-`feature:auth` exists, the others do not yet. Each one is created when its feature is built. `core:common` and `core:domain` are pure
+`feature:auth` and `feature:profile` exist, the others do not yet. Each one is created when its feature is built. `core:common` and `core:domain` are pure
 Kotlin (JVM) modules; the others are Android libraries (`designsystem`, `ui` and
 `navigation` with Compose). Target layout:
 
@@ -213,12 +213,29 @@ who stays signed in offline, and a session that cannot be read is discarded.
   tabs). When sign-in or sign-up succeeds the state changes and the screen is replaced; the
   screens never navigate away themselves. With a stored session the app opens signed in even
   without a connection.
-- **Temporary:** the "More" placeholder offers "Sign out" until the profile screen exists.
 
-Not done yet: email confirmation and password recovery links (step 1.2b), Google sign-in
-(step 1.3), account deletion and a real sign-out experience (step 1.4). The email
-confirmation works on the server (the link confirms the account) but the app does not yet
+Not done yet: email confirmation and password recovery links (step 1.2b) and Google sign-in
+(step 1.3). The email confirmation works on the server (the link confirms the account) but the app does not yet
 handle the link, so the redirect lands in the browser.
+
+## Profile and account
+
+- **`feature:profile`:** one screen reached from the "More" tab (which lists only the sections
+  that exist). It shows the email, edits the display name, chooses the theme (system, light,
+  dark, and wallpaper colors from Android 12) and offers sign-out and account deletion. It has
+  the same shape as the auth screens: a `ViewModel` combining the account state, the saved
+  preferences and what only the screen knows (an unsaved name, the dialog, an error), and a
+  stateless `Content`.
+- **Display name:** changed with `auth.updateUser` on the user's metadata (`full_name`), so the new
+  value reaches every screen through `AuthState`. The `profiles` table is not written; it is
+  reconciled by the synchronization phase.
+- **Account deletion:** `DeleteAccountUseCase` calls the server function `delete_my_account`
+  (through `postgrest-kt`), then removes the local rows of that owner, then signs out. Nothing
+  local is touched until the server has confirmed, because the local data may be the only copy.
+  Every table with user-owned rows must be added to `UserDataRepository.deleteAllFor`. There is no
+  avatar yet, so no files need deleting first.
+- **Sign-out works offline:** if the server cannot be told, the local session is still removed.
+- New design system pieces: top bar, confirmation dialog, radio and switch rows.
 
 ## Persistence conventions
 

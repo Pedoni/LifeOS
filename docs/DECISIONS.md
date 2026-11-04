@@ -213,11 +213,29 @@ both without needing two backends:
   the project's team and at most 2 emails per hour, so tests use the owner's own address (or an
   account created from the dashboard with "Auto Confirm User"). Disposable addresses need a
   custom SMTP server, which is also required before the first release; it is set up in step 1.2b.
-- **Temporary sign-out:** the "More" placeholder has a "Sign out" button until the profile
-  screen (step 1.4) replaces it.
+- **Temporary sign-out:** the "More" placeholder had a "Sign out" button until the profile
+  screen (step 1.4, D-23) replaced it.
 - **Dependencies:** `androidx.hilt:hilt-navigation-compose` 1.4.0 (view models in navigation
   destinations) and `javax.inject` 1 (only the `@Inject` annotation, so domain use cases can be
   constructor-injected without depending on Hilt or Android).
+
+### D-23 Profile and account deletion
+
+- **Scope of step 1.4:** a profile screen with the email, an editable display name, the theme
+  preference, sign-out and account deletion. The avatar is a separate later step (it needs
+  Storage, an image picker and an image loading library); language and notification settings wait
+  until there is something to configure.
+- **Display name storage:** in the account's metadata (`auth.updateUser`), which needs no new
+  dependency and reaches the whole app through `AuthState`. The `profiles` table keeps the name
+  given at sign-up until the synchronization phase reconciles it.
+- **Account deletion:** a confirmation dialog, not a password prompt: the session is already
+  authenticated, and a password step would add a screen and a failure path. The server function
+  `delete_my_account` runs first; local data is removed only after it succeeds, then the person
+  is signed out.
+- **Sign-out offline:** signing out removes the local session even when the server cannot be
+  reached (the previous behavior left the person signed in when offline).
+- **Dependency:** `postgrest-kt` 3.6.0 (same version as the auth module), used to call the
+  server function; the synchronization phase needs it anyway.
 
 ## Proposed
 

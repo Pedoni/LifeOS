@@ -16,6 +16,9 @@ import it.edon.lifeos.core.navigation.TopLevelDestination
 import it.edon.lifeos.core.navigation.deepLink
 import it.edon.lifeos.feature.profile.ProfileRoute
 import it.edon.lifeos.feature.profile.profileDestination
+import it.edon.lifeos.feature.tasks.TaskEditorRoute
+import it.edon.lifeos.feature.tasks.TasksScreen
+import it.edon.lifeos.feature.tasks.taskEditorDestination
 
 /**
  * Navigation graph of the signed-in app. Destinations without a feature yet are placeholders:
@@ -29,7 +32,16 @@ fun LifeOSNavHost(navController: NavHostController, modifier: Modifier = Modifie
         modifier = modifier
     ) {
         placeholderDestination<HomeRoute>(TopLevelDestination.Home)
-        placeholderDestination<TasksRoute>(TopLevelDestination.Tasks)
+        composable<TasksRoute>(
+            deepLinks = listOf(
+                navDeepLink<TasksRoute>(basePath = TopLevelDestination.Tasks.deepLink)
+            )
+        ) {
+            TasksScreen(
+                onAddTask = { navController.navigate(TaskEditorRoute()) },
+                onOpenTask = { navController.navigate(TaskEditorRoute(taskId = it)) }
+            )
+        }
         placeholderDestination<CalendarRoute>(TopLevelDestination.Calendar)
         placeholderDestination<HabitsRoute>(TopLevelDestination.Habits)
         composable<MoreRoute>(
@@ -38,6 +50,7 @@ fun LifeOSNavHost(navController: NavHostController, modifier: Modifier = Modifie
             MoreScreen(onOpenProfile = { navController.navigate(ProfileRoute) })
         }
         profileDestination(onBack = { navController.popBackStack() })
+        taskEditorDestination(onBack = { navController.popBackStack() })
     }
 }
 

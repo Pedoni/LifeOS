@@ -33,6 +33,12 @@ internal class AuthRepositoryImpl @Inject constructor(private val remote: AuthRe
 
     override suspend fun requestPasswordReset(email: String): Outcome<Unit, AuthError> =
         outcomeOf { remote.requestPasswordReset(email) }
+
+    override suspend fun updateDisplayName(displayName: String?): Outcome<Unit, AuthError> =
+        outcomeOf { remote.updateDisplayName(displayName) }
+
+    override suspend fun deleteAccount(): Outcome<Unit, AuthError> =
+        outcomeOf { remote.deleteAccount() }
 }
 
 // Only the failures the data source promises to report are turned into values. Anything else is

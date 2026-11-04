@@ -45,6 +45,11 @@ private class RecordingAuthRepository : AuthRepository {
 
     override suspend fun requestPasswordReset(email: String): Outcome<Unit, AuthError> =
         Outcome.Success(Unit)
+
+    override suspend fun updateDisplayName(displayName: String?): Outcome<Unit, AuthError> =
+        Outcome.Success(Unit)
+
+    override suspend fun deleteAccount(): Outcome<Unit, AuthError> = Outcome.Success(Unit)
 }
 
 class AuthUseCasesTest {

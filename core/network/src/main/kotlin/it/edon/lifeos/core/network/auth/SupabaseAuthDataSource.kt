@@ -5,6 +5,7 @@ import io.github.jan.supabase.auth.providers.builtin.Email
 import io.github.jan.supabase.auth.status.SessionStatus
 import io.github.jan.supabase.auth.user.UserInfo
 import io.github.jan.supabase.exceptions.RestException
+import io.github.jan.supabase.postgrest.Postgrest
 import java.io.IOException
 import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.flow.Flow
@@ -15,8 +16,10 @@ import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
 
 private const val DISPLAY_NAME_KEY = "full_name"
+private const val DELETE_ACCOUNT_FUNCTION = "delete_my_account"
 
-internal class SupabaseAuthDataSource(private val auth: Auth) : AuthRemoteDataSource {
+internal class SupabaseAuthDataSource(private val auth: Auth, private val postgrest: Postgrest) :
+    AuthRemoteDataSource {
 
     override val sessionState: Flow<RemoteSessionState> = auth.sessionStatus.map { status ->
         when (status) {
@@ -56,12 +59,31 @@ internal class SupabaseAuthDataSource(private val auth: Auth) : AuthRemoteDataSo
         auth.currentUserOrNull()?.toRemoteUser() ?: throw RemoteAuthException.Unknown(null)
     }
 
+    // Signing out must work without a connection: if the server cannot be told, the local session
+    // is still removed, and the server-side session simply expires on its own.
+    @Suppress("SwallowedException")
     override suspend fun signOut() = remoteCall {
-        auth.signOut()
+        try {
+            auth.signOut()
+        } catch (e: IOException) {
+            auth.clearSession()
+        }
     }
 
     override suspend fun requestPasswordReset(email: String) = remoteCall {
         auth.resetPasswordForEmail(email)
+    }
+
+    override suspend fun updateDisplayName(displayName: String?) = remoteCall {
+        auth.updateUser {
+            data = buildJsonObject { put(DISPLAY_NAME_KEY, displayName) }
+        }
+        Unit
+    }
+
+    override suspend fun deleteAccount() = remoteCall {
+        postgrest.rpc(DELETE_ACCOUNT_FUNCTION)
+        Unit
     }
 }
 

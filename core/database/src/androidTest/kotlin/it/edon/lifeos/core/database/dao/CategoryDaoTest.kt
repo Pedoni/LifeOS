@@ -51,6 +51,19 @@ class CategoryDaoTest {
     )
 
     @Test
+    fun deletingAllForAUserLeavesTheOthersAlone() = runTest {
+        dao.upsert(entity("a", userId = "user"))
+        dao.upsert(entity("b", userId = "user", deletedAt = 5L))
+        dao.upsert(entity("c", userId = "other"))
+
+        dao.deleteAllForUser("user")
+
+        assertNull(dao.getById("a"))
+        assertNull(dao.getById("b"))
+        assertEquals(listOf("c"), dao.observeActive("other").first().map { it.id })
+    }
+
+    @Test
     fun observedRowsAreOrderedByNameIgnoringCase() = runTest {
         dao.upsert(entity("a", name = "Zed"))
         dao.upsert(entity("b", name = "alpha"))

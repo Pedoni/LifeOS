@@ -12,7 +12,7 @@ project and a product to publish on Google Play.
 
 - Application ID and namespace: `it.edon.lifeos` (do not change).
 - Gradle modules: `:app`, nine `:core:*` modules (`ui` is still empty) and
-  `:feature:auth`. `feature/*` modules are created one at a time, when their feature is
+  `:feature:auth` and `:feature:profile`. `feature/*` modules are created one at a time, when their feature is
   built, with the `lifeos.android.feature` plugin; a feature never depends on another
   feature (`docs/ARCHITECTURE.md`).
 - The repository is an existing Android Studio project: preserve and evolve it,

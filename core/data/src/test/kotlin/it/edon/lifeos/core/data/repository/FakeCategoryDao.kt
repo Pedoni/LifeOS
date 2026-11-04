@@ -27,4 +27,8 @@ internal class FakeCategoryDao : CategoryDao {
     override suspend fun deleteById(id: String) {
         rows.value = rows.value - id
     }
+
+    override suspend fun deleteAllForUser(userId: String) {
+        rows.value = rows.value.filterValues { it.userId != userId }
+    }
 }

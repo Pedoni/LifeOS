@@ -10,6 +10,8 @@ import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.createSupabaseClient
+import io.github.jan.supabase.postgrest.Postgrest
+import io.github.jan.supabase.postgrest.postgrest
 import it.edon.lifeos.core.network.SupabaseConfig
 import it.edon.lifeos.core.network.auth.AuthRemoteDataSource
 import it.edon.lifeos.core.network.auth.SupabaseAuthDataSource
@@ -40,6 +42,7 @@ internal object NetworkModule {
                 cipher = KeystoreSessionCipher()
             )
         }
+        install(Postgrest)
     }
 
     @Provides
@@ -48,5 +51,10 @@ internal object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideAuthRemoteDataSource(auth: Auth): AuthRemoteDataSource = SupabaseAuthDataSource(auth)
+    fun providePostgrest(client: SupabaseClient): Postgrest = client.postgrest
+
+    @Provides
+    @Singleton
+    fun provideAuthRemoteDataSource(auth: Auth, postgrest: Postgrest): AuthRemoteDataSource =
+        SupabaseAuthDataSource(auth, postgrest)
 }

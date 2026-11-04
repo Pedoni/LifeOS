@@ -10,7 +10,6 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import it.edon.lifeos.core.designsystem.theme.LifeOSTheme
 import it.edon.lifeos.navigation.MainContent
-import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -23,13 +22,11 @@ class NavigationTest {
     @get:Rule
     val composeRule = createComposeRule()
 
-    private var signOutClicks = 0
-
     @Before
     fun showMainContent() {
         composeRule.setContent {
             LifeOSTheme {
-                MainContent(onSignOut = { signOutClicks++ })
+                MainContent()
             }
         }
     }
@@ -59,12 +56,11 @@ class NavigationTest {
         }
     }
 
+    // Opening the profile needs Hilt for its view model, so only the entry is checked here.
     @Test
-    fun moreOffersToSignOut() {
+    fun moreOffersTheProfile() {
         composeRule.onNode(tab("More")).performClick()
 
-        composeRule.onNodeWithText("Sign out").performClick()
-
-        assertEquals(1, signOutClicks)
+        composeRule.onNodeWithText("Profile").assertExists()
     }
 }
